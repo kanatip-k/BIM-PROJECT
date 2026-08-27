@@ -1,0 +1,8 @@
+Navisworks Manage 2027 setup:
+- The project references D:\Navisworks Manage 2027\Autodesk.Navisworks.Api.dll.
+- Deploy NavisMcpBridge.dll to D:\Navisworks Manage 2027\Plugins\NavisMcpBridge\.
+- Close bridge_mock.py before starting the plug-in because both use port 8765.
+- Restart Navisworks after installing or rebuilding the plug-in.
+- Open an NWD/NWF/NWC model and run Add-Ins > Navis MCP Bridge.
+- Run the plug-in again whenever you want to refresh the in-memory snapshot.
+- Keep Navisworks open while the web dashboard is using the bridge.

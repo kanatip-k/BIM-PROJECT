@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Navisworks MCP Model Explorer</title>
+<style>
+:root{--navy:#142638;--navy2:#1d354b;--blue:#1473e6;--blue-soft:#eaf3ff;--green:#16794b;--red:#b42318;--red-soft:#fff0ee;--ink:#17202a;--muted:#617184;--line:#d8e0e8;--line-strong:#bcc9d5;--surface:#fff;--background:#f3f6f9;--shadow:0 8px 24px rgba(20,38,56,.08)}
+*{box-sizing:border-box}body{margin:0;background:var(--background);color:var(--ink);font-family:"Segoe UI",Tahoma,Arial,sans-serif}
+header{background:linear-gradient(115deg,var(--navy),var(--navy2));color:#fff;padding:24px clamp(20px,4vw,56px);border-bottom:4px solid var(--blue)}
+.header-row{max-width:1680px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:20px}h1{margin:0 0 5px;font-size:clamp(22px,3vw,31px)}.subtitle{color:#c6d5e3;font-size:14px}
+.live-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid rgba(255,255,255,.28);border-radius:999px;background:rgba(255,255,255,.08);white-space:nowrap;font-size:13px}.live-dot{width:9px;height:9px;border-radius:50%;background:#94a3b8}.live-dot.ok{background:#45d483;box-shadow:0 0 0 4px rgba(69,212,131,.14)}.live-dot.error{background:#ff7168}
+main{max-width:1680px;margin:auto;padding:24px clamp(16px,3vw,40px) 48px}.summary-grid{display:grid;grid-template-columns:minmax(260px,1.6fr) repeat(3,minmax(160px,1fr));gap:14px;margin-bottom:18px}
+.summary-card{min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:0 2px 8px rgba(20,38,56,.04)}.summary-label{color:var(--muted);font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:7px}.summary-value{font-size:22px;line-height:1.25;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.summary-value.model{font-size:17px}.summary-note{color:var(--muted);font-size:12px;margin-top:5px;overflow-wrap:anywhere}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}.toolbar{display:grid;grid-template-columns:minmax(220px,2fr) repeat(3,minmax(145px,1fr)) 120px auto;gap:12px;align-items:end;padding:16px;border-bottom:1px solid var(--line);background:#fbfcfd}.field label{display:block;margin-bottom:6px;color:#415266;font-size:12px;font-weight:700}
+input,select,button{font:inherit}input,select{width:100%;height:40px;padding:0 11px;border:1px solid var(--line-strong);border-radius:7px;background:#fff;color:var(--ink);outline:none}input:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(20,115,230,.12)}button{height:40px;padding:0 16px;border:0;border-radius:7px;cursor:pointer;font-weight:700}.primary-button{background:var(--blue);color:#fff}.primary-button:hover{background:#0e62c5}.primary-button:disabled{opacity:.6;cursor:wait}.secondary-button{background:#edf2f7;color:#30445a}.secondary-button:hover{background:#e1e8ef}.secondary-button:disabled{opacity:.45;cursor:not-allowed}.detail-button{height:32px;padding:0 11px;border:1px solid #a9c8ec;background:var(--blue-soft);color:#0758b4;font-size:12px}
+.result-bar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 16px;border-bottom:1px solid var(--line);color:var(--muted);font-size:13px}.result-count{color:var(--ink);font-weight:700}.info-strip{padding:10px 16px;border-bottom:1px solid #c9dff8;background:#eef6ff;color:#28557e;font-size:12px}.error-box{display:none;margin:14px 16px;padding:12px 14px;border:1px solid #ffc7c2;border-radius:8px;background:var(--red-soft);color:var(--red);white-space:pre-wrap}
+.table-scroll{overflow:auto;max-height:65vh}table{width:max-content;min-width:100%;border-collapse:separate;border-spacing:0}th{position:sticky;top:0;z-index:2;padding:12px 11px;border-right:1px solid #b8c6d3;border-bottom:2px solid #8298aa;background:#e3ebf2;color:#24394d;text-align:left;font-size:12px;font-weight:800;letter-spacing:.025em;white-space:nowrap}th:last-child,td:last-child{border-right:0}td{min-width:130px;max-width:280px;padding:11px;border-right:1px solid #d9e1e8;border-bottom:1px solid #e1e7ed;background:#fff;vertical-align:top;font-size:13px;overflow-wrap:anywhere}tbody tr:nth-child(even) td{background:#fafbfd}tbody tr:hover td{background:#f1f7ff}.row-number{min-width:56px;width:56px;text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}.id-cell{min-width:190px;width:190px;max-width:190px;color:#506176;font-family:Consolas,monospace;font-size:11px;overflow-wrap:anywhere}.name-cell{min-width:230px;font-weight:650}.class-cell,.category-cell,.level-cell{min-width:145px}.metric-cell{text-align:right;font-variant-numeric:tabular-nums}.property-count{min-width:90px;text-align:center;font-variant-numeric:tabular-nums}.empty-state{padding:44px 20px;text-align:center;color:var(--muted)}
+.pagination{display:flex;align-items:center;justify-content:center;gap:10px;min-height:64px;padding:12px 16px;border-top:1px solid var(--line)}.page-text{min-width:160px;text-align:center;color:#42546a;font-size:13px;font-weight:700}
+.modal-backdrop{position:fixed;inset:0;z-index:20;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(10,23,36,.58)}.modal-backdrop.open{display:flex}.modal{width:min(920px,100%);max-height:88vh;display:flex;flex-direction:column;overflow:hidden;border-radius:13px;background:#fff;box-shadow:0 28px 80px rgba(0,0,0,.3)}.modal-header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:18px 20px;border-bottom:1px solid var(--line);background:var(--navy);color:#fff}.modal-title{margin:0 0 5px;font-size:19px}.modal-subtitle{color:#c6d5e3;font-size:12px;overflow-wrap:anywhere}.close-button{min-width:40px;padding:0;background:rgba(255,255,255,.12);color:#fff;font-size:20px}.modal-body{overflow:auto;padding:18px 20px 24px}.detail-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}.detail-summary>div{padding:11px 12px;border:1px solid var(--line);border-radius:8px;background:#f7f9fb}.detail-summary b{display:block;margin-bottom:4px;color:var(--muted);font-size:11px;text-transform:uppercase}.property-table{min-width:640px;border:1px solid var(--line)}.property-table th{position:static}.property-table td:first-child{width:46%;color:#30445a;font-weight:650}.property-table td{overflow-wrap:anywhere}
+@media(max-width:1050px){.summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.toolbar{grid-template-columns:repeat(2,minmax(0,1fr))}.toolbar button{width:100%}}@media(max-width:620px){.header-row{align-items:flex-start;flex-direction:column}.summary-grid,.toolbar,.detail-summary{grid-template-columns:1fr}.result-bar{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body>
+<header><div class="header-row"><div><h1>Navisworks Model Explorer</h1><div class="subtitle">Navisworks .NET API → MCP → Web Dashboard</div></div><div class="live-pill"><span id="liveDot" class="live-dot"></span><span id="connectionText">ยังไม่ได้เชื่อมต่อ</span></div></div></header>
+<main>
+  <section class="summary-grid" aria-label="Model summary">
+    <div class="summary-card"><div class="summary-label">Model file</div><div id="modelName" class="summary-value model">—</div><div id="modelPath" class="summary-note">รอข้อมูลจาก Navisworks</div></div>
+    <div class="summary-card"><div class="summary-label">Total elements</div><div id="totalElements" class="summary-value">—</div><div class="summary-note">จำนวนทั้งหมดใน Snapshot</div></div>
+    <div class="summary-card"><div class="summary-label">Loaded to web</div><div id="loadedElements" class="summary-value">—</div><div class="summary-note">รายการที่ส่งผ่าน MCP รอบนี้</div></div>
+    <div class="summary-card"><div class="summary-label">Data source</div><div id="sourceName" class="summary-value model">—</div><div id="snapshotTime" class="summary-note">—</div></div>
+  </section>
+  <section class="panel">
+    <div class="toolbar">
+      <div class="field"><label for="searchInput">ค้นหา Element</label><input id="searchInput" type="search" placeholder="ชื่อ, ID, Class, Category หรือ Property..."></div>
+      <div class="field"><label for="classFilter">Class</label><select id="classFilter"><option value="">ทุก Class</option></select></div>
+      <div class="field"><label for="categoryFilter">Category</label><select id="categoryFilter"><option value="">ทุก Category</option></select></div>
+      <div class="field"><label for="columnView">ชุดหัวตาราง</label><select id="columnView"><option value="boq">BOQ Preparation</option><option value="general">ข้อมูลทั่วไป</option><option value="quantities">ขนาดและปริมาณ</option><option value="classification">Classification</option><option value="ifc">IFC / Exchange</option><option value="all">ทุกหัวข้อจาก CSV</option></select></div>
+      <div class="field"><label for="pageSize">แถวต่อหน้า</label><select id="pageSize"><option value="25">25</option><option value="50" selected>50</option><option value="100">100</option></select></div>
+      <button id="refreshButton" class="primary-button" type="button">Refresh from MCP</button>
+    </div>
+    <div id="errorBox" class="error-box"></div>
+    <div id="boqHint" class="info-strip">BOQ Preparation แสดงข้อมูลระดับ Element เพื่อเตรียมจัดกลุ่มปริมาณ กรุณาตรวจสอบหน่วย ปริมาณ และราคาก่อนนำไปสรุป BOQ</div>
+    <div class="result-bar"><div><span id="resultCount" class="result-count">0</span> รายการตรงกับตัวกรอง</div><div id="transportText">Transport: —</div></div>
+    <div class="table-scroll">
+      <table aria-label="Navisworks model elements"><thead id="elementHead"></thead><tbody id="elementRows"></tbody></table>
+      <div id="emptyState" class="empty-state">กำลังโหลดข้อมูลจาก MCP...</div>
+    </div>
+    <div class="pagination"><button id="previousPage" class="secondary-button" type="button">← ก่อนหน้า</button><div id="pageText" class="page-text">หน้า 1 / 1</div><button id="nextPage" class="secondary-button" type="button">ถัดไป →</button></div>
+  </section>
+</main>
+<div id="detailBackdrop" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="detailTitle"><div class="modal"><div class="modal-header"><div><h2 id="detailTitle" class="modal-title">Element details</h2><div id="detailId" class="modal-subtitle"></div></div><button id="closeDetail" class="close-button" type="button" aria-label="Close">×</button></div><div class="modal-body"><div id="detailSummary" class="detail-summary"></div><div class="table-scroll"><table class="property-table" aria-label="Element properties"><thead><tr><th>Property name</th><th>Value</th></tr></thead><tbody id="propertyRows"></tbody></table></div></div></div></div>
+<script>
+const state={elements:[],filtered:[],page:1,pageSize:50,columnView:"boq"};const numberFormat=new Intl.NumberFormat("th-TH");const byId=id=>document.getElementById(id);
+const csvColumnLabels=[
+  "Assembly Code","Assembly Description","Author","Category",
+  "Classification Number","Classification Title","Comments","Cost","Count","Description",
+  "Area","Volume","Length","Width","Height","Unconnected Height","Perimeter","Thickness","Slope","Excavation Volume on Toposolid",
+  "Exchange Entity ID","Exchange ID","Export to IFC","Export to IFC As","Export Type to IFC","Export Type to IFC As",
+  "Family","Family and Type","IFC Predefined Type","IfcGUID","Image","Keynote","Level","Manufacturer","Mark","Model","Type",
+  "Type Comments","Type IFC Predefined Type","Type IfcGUID","Type Image","Type Mark","URL"
+];
+const numericLabels=new Set(["Cost","Unit Cost","Quantity","Count","Area","Volume","Length","Width","Height","Unconnected Height","Perimeter","Thickness","Slope","Excavation Volume on Toposolid"]);
+const aliasMap={
+  "Family and Type":["Family Type","Family and Type"],
+  "IFC Predefined Type":["IFC.Predefined Type","IFC Predefined Type"],
+  "IfcGUID":["IFC.Guid","IfcGUID","GUID"],
+  "Level":["Element.Level","Base Level","Reference Level"],
+  "Category":["Element.Category","Item.Category"],
+  "Type Comments":["Type.Type Comments"],
+  "Type Mark":["Type.Type Mark"]
+};
+const makeColumn=label=>({label,className:numericLabels.has(label)?"metric-cell":""});
+const csvColumns=csvColumnLabels.map(makeColumn);
+const selectColumns=labels=>labels.map(label=>csvColumns.find(column=>column.label===label)).filter(Boolean);
+const columnGroups={
+  boq:[
+    {label:"BOQ Code",className:""},{label:"Description",className:""},{label:"Category",className:""},
+    {label:"Family and Type",className:""},{label:"Type",className:""},{label:"Level",className:""},
+    {label:"Material",className:""},{label:"Unit",className:""},{label:"Quantity",className:"metric-cell"},
+    {label:"Count",className:"metric-cell"},{label:"Length",className:"metric-cell"},
+    {label:"Area",className:"metric-cell"},{label:"Volume",className:"metric-cell"},
+    {label:"Unit Cost",className:"metric-cell"},{label:"Mark",className:""}
+  ],
+  general:selectColumns(["Category","Family","Family and Type","Type","Level","Mark","Model","Count","Description","Cost"]),
+  quantities:selectColumns(["Category","Family and Type","Level","Area","Volume","Length","Width","Height","Unconnected Height","Perimeter","Thickness","Slope","Excavation Volume on Toposolid"]),
+  classification:selectColumns(["Category","Assembly Code","Assembly Description","Classification Number","Classification Title","Keynote","Author","Comments"]),
+  ifc:selectColumns(["Category","Family and Type","IFC Predefined Type","IfcGUID","Exchange Entity ID","Exchange ID","Export to IFC","Export to IFC As","Export Type to IFC","Export Type to IFC As","Type IFC Predefined Type","Type IfcGUID"]),
+  all:csvColumns
+};
+function fileName(path){if(!path)return"—";return String(path).split(/[\\/]/).pop()||path}
+function propertyValue(element,terms){const entries=Object.entries(element.properties||{});for(const term of terms){const wanted=term.toLowerCase();const exact=entries.find(([key])=>key.toLowerCase()===wanted);if(exact&&exact[1]!=="")return String(exact[1]);const suffix=entries.find(([key])=>key.toLowerCase().endsWith("."+wanted));if(suffix&&suffix[1]!=="")return String(suffix[1])}return"—"}
+function categoryOf(element){return propertyValue(element,["Element.Category","Category","Item.Category"])}function levelOf(element){return propertyValue(element,["Element.Level","Level","Base Level","Reference Level"])}
+function inferUnit(value,fallback){const text=String(value||"").toLowerCase();if(/m[³3]|cubic meter/.test(text))return"m³";if(/ft[³3]|cubic feet|cubic foot/.test(text))return"ft³";if(/m[²2]|square meter/.test(text))return"m²";if(/ft[²2]|square feet|square foot/.test(text))return"ft²";if(/\bmm\b/.test(text))return"mm";if(/\bcm\b/.test(text))return"cm";if(/\bft\b|feet|foot/.test(text))return"ft";if(/\bm\b|meter/.test(text))return"m";return fallback}
+function quantityInfo(element){const volume=propertyValue(element,["Volume"]);if(volume!=="—")return{value:volume,unit:inferUnit(volume,"m³")};const area=propertyValue(element,["Area"]);if(area!=="—")return{value:area,unit:inferUnit(area,"m²")};const length=propertyValue(element,["Length"]);if(length!=="—")return{value:length,unit:inferUnit(length,"m")};return{value:"1",unit:"ea"}}
+function valueForColumn(element,column){if(column.label==="Category")return categoryOf(element);if(column.label==="Level")return levelOf(element);if(column.label==="Count")return"1";if(column.label==="BOQ Code")return propertyValue(element,["Assembly Code","Classification Number","Keynote","Mark"]);if(column.label==="Description"){const value=propertyValue(element,["Description","Type Comments","Comments"]);return value!=="—"?value:(element.displayName||"—")}if(column.label==="Material")return propertyValue(element,["Material","Material Name","Structural Material"]);if(column.label==="Unit")return quantityInfo(element).unit;if(column.label==="Quantity")return quantityInfo(element).value;if(column.label==="Unit Cost")return propertyValue(element,["Cost","Unit Cost"]);return propertyValue(element,[column.label,...(aliasMap[column.label]||[])])}
+function setConnection(mode,text){byId("liveDot").className="live-dot"+(mode?" "+mode:"");byId("connectionText").textContent=text}
+function appendCell(row,text,className){const cell=document.createElement("td");cell.textContent=text;if(className)cell.className=className;row.appendChild(cell);return cell}
+function fillSelect(select,values,defaultText){const previous=select.value;select.replaceChildren();const first=document.createElement("option");first.value="";first.textContent=defaultText;select.appendChild(first);values.forEach(value=>{const option=document.createElement("option");option.value=value;option.textContent=value;select.appendChild(option)});if(values.includes(previous))select.value=previous}
+function buildFilters(){const classes=[...new Set(state.elements.map(e=>e.classDisplayName||"—"))].sort();const categories=[...new Set(state.elements.map(categoryOf))].sort();fillSelect(byId("classFilter"),classes,"ทุก Class");fillSelect(byId("categoryFilter"),categories,"ทุก Category")}
+function applyFilters(){const query=byId("searchInput").value.trim().toLowerCase();const className=byId("classFilter").value;const category=byId("categoryFilter").value;state.filtered=state.elements.filter(element=>{if(className&&(element.classDisplayName||"—")!==className)return false;if(category&&categoryOf(element)!==category)return false;if(!query)return true;const haystack=[element.id,element.displayName,element.classDisplayName,categoryOf(element),levelOf(element),...Object.entries(element.properties||{}).flat()].join(" ").toLowerCase();return haystack.includes(query)});state.page=1;renderTable()}
+function renderTable(){
+  const columns=columnGroups[state.columnView]||columnGroups.general;
+  const head=byId("elementHead");
+  const headerRow=document.createElement("tr");
+  [["ลำดับ","row-number"],["Element ID",""],["Display Name",""],["Class",""]].forEach(([label,className])=>{const th=document.createElement("th");th.textContent=label;if(className)th.className=className;headerRow.appendChild(th)});
+  columns.forEach(column=>{const th=document.createElement("th");th.textContent=column.label;headerRow.appendChild(th)});
+  ["Properties","รายละเอียด"].forEach(label=>{const th=document.createElement("th");th.textContent=label;headerRow.appendChild(th)});
+  head.replaceChildren(headerRow);
+
+  const body=byId("elementRows");body.replaceChildren();
+  const totalPages=Math.max(1,Math.ceil(state.filtered.length/state.pageSize));
+  state.page=Math.min(state.page,totalPages);
+  const start=(state.page-1)*state.pageSize;
+  const items=state.filtered.slice(start,start+state.pageSize);
+  items.forEach((element,offset)=>{
+    const row=document.createElement("tr");
+    appendCell(row,numberFormat.format(start+offset+1),"row-number");
+    appendCell(row,element.id||"—","id-cell");
+    appendCell(row,element.displayName||"—","name-cell");
+    appendCell(row,element.classDisplayName||"—","class-cell");
+    columns.forEach(column=>appendCell(row,valueForColumn(element,column),column.className));
+    appendCell(row,numberFormat.format(Object.keys(element.properties||{}).length),"property-count");
+    const actionCell=document.createElement("td");
+    const button=document.createElement("button");
+    button.type="button";button.className="detail-button";button.textContent="ดู Properties";
+    button.addEventListener("click",()=>openDetails(element));
+    actionCell.appendChild(button);row.appendChild(actionCell);body.appendChild(row)
+  });
+  byId("emptyState").style.display=items.length?"none":"block";
+  byId("resultCount").textContent=numberFormat.format(state.filtered.length);
+  byId("pageText").textContent=`หน้า ${numberFormat.format(state.page)} / ${numberFormat.format(totalPages)}`;
+  byId("previousPage").disabled=state.page<=1;byId("nextPage").disabled=state.page>=totalPages
+}
+function summaryItem(label,value){const box=document.createElement("div");const heading=document.createElement("b");heading.textContent=label;const content=document.createElement("span");content.textContent=value||"—";box.append(heading,content);return box}
+function openDetails(element){byId("detailTitle").textContent=element.displayName||"Unnamed element";byId("detailId").textContent="Element ID: "+(element.id||"—");byId("detailSummary").replaceChildren(summaryItem("Class",element.classDisplayName||"—"),summaryItem("Category",categoryOf(element)),summaryItem("Level",levelOf(element)));const propertyRows=byId("propertyRows");propertyRows.replaceChildren();const properties=Object.entries(element.properties||{}).sort(([a],[b])=>a.localeCompare(b));properties.forEach(([key,value])=>{const row=document.createElement("tr");appendCell(row,key);appendCell(row,String(value??""));propertyRows.appendChild(row)});if(!properties.length){const row=document.createElement("tr");const cell=appendCell(row,"ไม่มี Property สำหรับ Element นี้");cell.colSpan=2;propertyRows.appendChild(row)}byId("detailBackdrop").classList.add("open")}
+function closeDetails(){byId("detailBackdrop").classList.remove("open")}
+async function loadData(){const button=byId("refreshButton");const errorBox=byId("errorBox");button.disabled=true;button.textContent="กำลังเรียก MCP...";errorBox.style.display="none";setConnection("","กำลังโหลดข้อมูล...");try{const response=await fetch("/api/model",{cache:"no-store"});const data=await response.json();if(!response.ok)throw new Error(data.error||"MCP request failed");state.elements=data.elements||[];state.filtered=[...state.elements];state.page=1;byId("modelName").textContent=fileName(data.modelName);byId("modelPath").textContent=data.modelName||"—";byId("totalElements").textContent=numberFormat.format(data.elementCount??state.elements.length);byId("loadedElements").textContent=numberFormat.format(data.returnedCount??state.elements.length);byId("sourceName").textContent=data.source||"MCP";byId("snapshotTime").textContent=data.snapshotUtc&&data.snapshotUtc!=="DEMO"?"Snapshot: "+new Date(data.snapshotUtc).toLocaleString("th-TH"):"Snapshot: —";byId("transportText").textContent="Transport: "+(data.transport||"MCP");buildFilters();applyFilters();setConnection("ok","เชื่อมต่อ Navisworks แล้ว")}catch(error){state.elements=[];state.filtered=[];renderTable();errorBox.textContent=String(error);errorBox.style.display="block";setConnection("error","เชื่อมต่อไม่สำเร็จ")}finally{button.disabled=false;button.textContent="Refresh from MCP"}}
+let searchTimer;byId("searchInput").addEventListener("input",()=>{clearTimeout(searchTimer);searchTimer=setTimeout(applyFilters,180)});byId("classFilter").addEventListener("change",applyFilters);byId("categoryFilter").addEventListener("change",applyFilters);byId("columnView").addEventListener("change",event=>{state.columnView=event.target.value;byId("boqHint").style.display=state.columnView==="boq"?"block":"none";renderTable()});byId("pageSize").addEventListener("change",event=>{state.pageSize=Number(event.target.value);state.page=1;renderTable()});byId("refreshButton").addEventListener("click",loadData);byId("previousPage").addEventListener("click",()=>{state.page--;renderTable()});byId("nextPage").addEventListener("click",()=>{state.page++;renderTable()});byId("closeDetail").addEventListener("click",closeDetails);byId("detailBackdrop").addEventListener("click",event=>{if(event.target===byId("detailBackdrop"))closeDetails()});document.addEventListener("keydown",event=>{if(event.key==="Escape")closeDetails()});loadData();
+</script>
+</body>
+</html>

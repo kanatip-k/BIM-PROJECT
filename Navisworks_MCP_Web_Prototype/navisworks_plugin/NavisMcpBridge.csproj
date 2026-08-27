@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <AssemblyName>NavisMcpBridge</AssemblyName>
+    <RootNamespace>NavisMcpBridge</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <NAVISWORKS_INSTALL Condition="'$(NAVISWORKS_INSTALL)'==''">D:\Navisworks Manage 2027</NAVISWORKS_INSTALL>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="Autodesk.Navisworks.Api">
+      <HintPath>$(NAVISWORKS_INSTALL)\Autodesk.Navisworks.Api.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+</Project>
