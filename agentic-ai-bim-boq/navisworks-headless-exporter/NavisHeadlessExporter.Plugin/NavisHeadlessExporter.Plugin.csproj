@@ -1,0 +1,25 @@
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
+    <OutputType>Library</OutputType>
+    <AssemblyName>NavisHeadlessExporter</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <RootNamespace>NavisHeadlessExporter</RootNamespace>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="NavisHeadlessExporterPlugin.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Autodesk.Navisworks.Api">
+      <HintPath>D:\Navisworks Manage 2027\Autodesk.Navisworks.Api.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="System" />
+    <Reference Include="System.Runtime.Serialization" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

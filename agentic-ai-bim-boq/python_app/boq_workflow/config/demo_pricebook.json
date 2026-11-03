@@ -1,0 +1,25 @@
+{
+  "version": "demo-thb-2026-01",
+  "currency": "THB",
+  "disclaimer": "ราคาทั้งหมดเป็นข้อมูลสาธิตสำหรับโครงงาน ไม่ใช่ราคาตลาดหรือราคากลางสำหรับใช้งานก่อสร้างจริง",
+  "entries": [
+    {"id": "demo-A10-m3", "codePrefix": "A10", "discipline": "Structure", "unit": "m3", "materialRate": 2600, "laborRate": 900, "equipmentRate": 250},
+    {"id": "demo-B10-m3", "codePrefix": "B10", "discipline": "Structure", "unit": "m3", "materialRate": 2900, "laborRate": 1050, "equipmentRate": 300},
+    {"id": "demo-B10-m", "codePrefix": "B10", "discipline": "Structure", "unit": "m", "materialRate": 850, "laborRate": 320, "equipmentRate": 80},
+    {"id": "demo-B20-m2", "codePrefix": "B20", "discipline": "Architecture", "unit": "m2", "materialRate": 950, "laborRate": 350, "equipmentRate": 30},
+    {"id": "demo-C10-item", "codePrefix": "C10", "discipline": "Architecture", "unit": "item", "materialRate": 4500, "laborRate": 900, "equipmentRate": 0},
+    {"id": "demo-C30-m2", "codePrefix": "C30", "discipline": "Architecture", "unit": "m2", "materialRate": 420, "laborRate": 230, "equipmentRate": 20},
+    {"id": "demo-D20-m", "codePrefix": "D20", "discipline": "MEP", "unit": "m", "materialRate": 520, "laborRate": 260, "equipmentRate": 40},
+    {"id": "demo-D30-m", "codePrefix": "D30", "discipline": "MEP", "unit": "m", "materialRate": 680, "laborRate": 320, "equipmentRate": 60},
+    {"id": "demo-D40-item", "codePrefix": "D40", "discipline": "MEP", "unit": "item", "materialRate": 750, "laborRate": 250, "equipmentRate": 0},
+    {"id": "demo-D50-item", "codePrefix": "D50", "discipline": "MEP", "unit": "item", "materialRate": 620, "laborRate": 280, "equipmentRate": 0},
+    {"id": "demo-structure-m3-generic", "codePrefix": "*", "discipline": "Structure", "unit": "m3", "materialRate": 2800, "laborRate": 950, "equipmentRate": 250},
+    {"id": "demo-structure-m-generic", "codePrefix": "*", "discipline": "Structure", "unit": "m", "materialRate": 800, "laborRate": 300, "equipmentRate": 80},
+    {"id": "demo-structure-item-generic", "codePrefix": "*", "discipline": "Structure", "unit": "item", "materialRate": 1600, "laborRate": 500, "equipmentRate": 100},
+    {"id": "demo-architecture-m2-generic", "codePrefix": "*", "discipline": "Architecture", "unit": "m2", "materialRate": 700, "laborRate": 300, "equipmentRate": 20},
+    {"id": "demo-architecture-m-generic", "codePrefix": "*", "discipline": "Architecture", "unit": "m", "materialRate": 550, "laborRate": 250, "equipmentRate": 20},
+    {"id": "demo-architecture-item-generic", "codePrefix": "*", "discipline": "Architecture", "unit": "item", "materialRate": 1000, "laborRate": 300, "equipmentRate": 0},
+    {"id": "demo-mep-m-generic", "codePrefix": "*", "discipline": "MEP", "unit": "m", "materialRate": 600, "laborRate": 280, "equipmentRate": 40},
+    {"id": "demo-mep-item-generic", "codePrefix": "*", "discipline": "MEP", "unit": "item", "materialRate": 900, "laborRate": 320, "equipmentRate": 20}
+  ]
+}

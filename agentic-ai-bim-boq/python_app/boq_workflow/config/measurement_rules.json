@@ -1,0 +1,12 @@
+{
+  "version": "measurement-basic-1.0",
+  "rules": [
+    {"id": "rule-count-openings", "measure": "COUNT", "disciplines": ["Architecture"], "keywords": ["door", "window", "furniture", "equipment"]},
+    {"id": "rule-volume-concrete", "measure": "VOLUME", "disciplines": ["Structure"], "keywords": ["foundation", "footing", "concrete", "column", "slab"]},
+    {"id": "rule-length-framing", "measure": "LENGTH", "disciplines": ["Structure"], "keywords": ["beam", "framing", "steel"]},
+    {"id": "rule-area-envelope", "measure": "AREA", "disciplines": ["Architecture"], "keywords": ["wall", "floor", "ceiling", "roof", "finish"]},
+    {"id": "rule-length-mep", "measure": "LENGTH", "disciplines": ["MEP"], "keywords": ["pipe", "duct", "cable", "conduit"]},
+    {"id": "rule-count-mep-equipment", "measure": "COUNT", "disciplines": ["MEP"], "keywords": ["equipment", "fixture", "sprinkler", "terminal", "panel"]}
+  ],
+  "defaultRule": {"id": "rule-default-count", "measure": "COUNT", "disciplines": ["*"], "keywords": []}
+}

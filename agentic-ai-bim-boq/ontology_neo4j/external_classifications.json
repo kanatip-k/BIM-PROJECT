@@ -1,0 +1,6 @@
+{
+  "schema_version": 1,
+  "description": "Reviewed external catalogs only. Empty until code, edition, source and reviewer are supplied. Native model codes alone are observations, not verified crosswalks.",
+  "classifications": [],
+  "crosswalks": []
+}

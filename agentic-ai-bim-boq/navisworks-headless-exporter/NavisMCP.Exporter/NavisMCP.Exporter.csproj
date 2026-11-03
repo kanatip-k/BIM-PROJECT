@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <AssemblyName>NavisMCP.Exporter</AssemblyName>
+    <RootNamespace>NavisMCPExporter</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <NavisApiDir Condition="'$(NavisApiDir)' == ''">$(NAVIS_API_DIR)</NavisApiDir>
+    <NavisApiDir Condition="'$(NavisApiDir)' == ''">$(NAVISWORKS_HOME)</NavisApiDir>
+    <NavisApiDir Condition="'$(NavisApiDir)' == ''">D:\Navisworks Manage 2027</NavisApiDir>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Autodesk.Navisworks.Api">
+      <HintPath>$(NavisApiDir)\Autodesk.Navisworks.Api.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,550 @@
+{
+  "schemaVersion": "0.1.0",
+  "ontologyId": "boq-foundation-poc",
+  "name": "BOQ Foundation Cost Code Ontology - Neo4j Base",
+  "language": "th-TH",
+  "status": "draft-proof-of-concept",
+  "createdDate": "2026-10-29",
+  "description": "ฐานข้อมูลกราฟตัวอย่างสำหรับเชื่อมแนวคิดระบบฐานราก องค์ประกอบ BIM รายการ BOQ กฎวัดปริมาณ UniFormat และ EIT Cost Code โดยไม่สร้างรหัสที่ยังไม่ได้รับการยืนยัน",
+  "designPrinciples": [
+    "Construction concept, BOQ work item, classification code, cost code and measurement rule are separate node types.",
+    "One construction concept may generate multiple BOQ work items.",
+    "needs_review and unresolved mappings must not be returned as confirmed cost codes.",
+    "Unknown mappings remain null and are represented by issue nodes.",
+    "MasterFormat and OmniClass codes are not populated until a licensed and reviewed source is available."
+  ],
+  "sources": [
+    {
+      "id": "source:boq_rules",
+      "path": "python_app/boq_workflow/config/boq_element_rules.json",
+      "role": "BOQ work items and measurement requirements"
+    },
+    {
+      "id": "source:boq_eit_crosswalk",
+      "path": "python_app/boq_workflow/config/boq_to_eit_mapping.json",
+      "role": "BOQ to EIT crosswalk and mapping status"
+    },
+    {
+      "id": "source:eit_reference",
+      "path": "python_app/boq_workflow/config/eit_cost_code_reference.json",
+      "role": "EIT code titles and hierarchy"
+    },
+    {
+      "id": "source:case2",
+      "path": "data/export/CASE2_ST_ALL.boq.json",
+      "role": "Observed BIM evidence and UniFormat signals"
+    }
+  ],
+  "pendingExternalSchemes": [
+    {
+      "scheme": "MASTERFORMAT",
+      "status": "not_loaded",
+      "reason": "No licensed and expert-reviewed code source has been approved for this project."
+    },
+    {
+      "scheme": "OMNICLASS",
+      "status": "not_loaded",
+      "reason": "Table-specific codes have not been confirmed from a licensed source."
+    }
+  ],
+  "nodes": [
+    {
+      "id": "concept:foundation_system",
+      "labels": ["ConstructionConcept", "FoundationConcept"],
+      "properties": {
+        "conceptId": "FOUNDATION_SYSTEM",
+        "nameTh": "ระบบฐานราก",
+        "nameEn": "Foundation System",
+        "conceptType": "system",
+        "reviewStatus": "confirmed_for_poc"
+      }
+    },
+    {
+      "id": "concept:shallow_foundation",
+      "labels": ["ConstructionConcept", "FoundationConcept"],
+      "properties": {
+        "conceptId": "SHALLOW_FOUNDATION",
+        "nameTh": "ฐานรากตื้น",
+        "nameEn": "Shallow Foundation",
+        "conceptType": "system",
+        "reviewStatus": "confirmed_for_poc"
+      }
+    },
+    {
+      "id": "concept:deep_foundation",
+      "labels": ["ConstructionConcept", "FoundationConcept"],
+      "properties": {
+        "conceptId": "DEEP_FOUNDATION",
+        "nameTh": "ฐานรากลึก",
+        "nameEn": "Deep Foundation",
+        "conceptType": "system",
+        "reviewStatus": "confirmed_for_poc"
+      }
+    },
+    {
+      "id": "concept:isolated_footing",
+      "labels": ["ConstructionConcept", "FoundationElement"],
+      "properties": {
+        "conceptId": "ISOLATED_FOOTING",
+        "nameTh": "ฐานรากเดี่ยว / ฐานแผ่",
+        "nameEn": "Isolated / Pad Footing",
+        "conceptType": "element",
+        "reviewStatus": "confirmed_for_poc"
+      }
+    },
+    {
+      "id": "concept:strip_footing",
+      "labels": ["ConstructionConcept", "FoundationElement"],
+      "properties": {
+        "conceptId": "STRIP_FOOTING",
+        "nameTh": "ฐานรากแถบ",
+        "nameEn": "Strip Footing",
+        "conceptType": "element",
+        "reviewStatus": "confirmed_for_poc"
+      }
+    },
+    {
+      "id": "concept:raft_foundation",
+      "labels": ["ConstructionConcept", "FoundationElement"],
+      "properties": {
+        "conceptId": "RAFT_FOUNDATION",
+        "nameTh": "ฐานรากแพ",
+        "nameEn": "Raft Foundation",
+        "conceptType": "element",
+        "reviewStatus": "confirmed_for_poc"
+      }
+    },
+    {
+      "id": "concept:pile_foundation",
+      "labels": ["ConstructionConcept", "FoundationConcept"],
+      "properties": {
+        "conceptId": "PILE_FOUNDATION",
+        "nameTh": "ระบบฐานรากเสาเข็ม",
+        "nameEn": "Pile Foundation",
+        "conceptType": "system",
+        "reviewStatus": "confirmed_for_poc"
+      }
+    },
+    {
+      "id": "concept:pile",
+      "labels": ["ConstructionConcept", "FoundationElement"],
+      "properties": {
+        "conceptId": "PILE",
+        "nameTh": "เสาเข็ม",
+        "nameEn": "Pile",
+        "conceptType": "element",
+        "reviewStatus": "confirmed_for_poc"
+      }
+    },
+    {
+      "id": "concept:bored_pile",
+      "labels": ["ConstructionConcept", "FoundationElement"],
+      "properties": {
+        "conceptId": "BORED_PILE",
+        "nameTh": "เสาเข็มเจาะ",
+        "nameEn": "Bored Pile",
+        "conceptType": "element",
+        "reviewStatus": "confirmed_for_poc"
+      }
+    },
+    {
+      "id": "concept:precast_driven_pile",
+      "labels": ["ConstructionConcept", "FoundationElement"],
+      "properties": {
+        "conceptId": "PRECAST_DRIVEN_PILE",
+        "nameTh": "เสาเข็มสำเร็จรูป / เสาเข็มตอก",
+        "nameEn": "Precast Driven Pile",
+        "conceptType": "element",
+        "reviewStatus": "confirmed_for_poc"
+      }
+    },
+    {
+      "id": "concept:pile_cap",
+      "labels": ["ConstructionConcept", "FoundationElement"],
+      "properties": {
+        "conceptId": "PILE_CAP",
+        "nameTh": "หัวเสาเข็ม",
+        "nameEn": "Pile Cap",
+        "conceptType": "element",
+        "reviewStatus": "confirmed_for_poc"
+      }
+    },
+    {
+      "id": "concept:pedestal",
+      "labels": ["ConstructionConcept", "FoundationElement"],
+      "properties": {
+        "conceptId": "PEDESTAL",
+        "nameTh": "ตอม่อ",
+        "nameEn": "Pedestal",
+        "conceptType": "element",
+        "reviewStatus": "unconfirmed",
+        "boqCode": null
+      }
+    },
+    {
+      "id": "concept:foundation_excavation",
+      "labels": ["ConstructionConcept", "WorkProcess"],
+      "properties": {
+        "conceptId": "FOUNDATION_EXCAVATION",
+        "nameTh": "ขุดดินฐานราก / บ่อ",
+        "nameEn": "Foundation Excavation",
+        "conceptType": "process",
+        "reviewStatus": "confirmed_for_poc"
+      }
+    },
+    {
+      "id": "bim:ifc_footing",
+      "labels": ["BIMEntity"],
+      "properties": {
+        "name": "IfcFooting"
+      }
+    },
+    {
+      "id": "bim:ifc_pile",
+      "labels": ["BIMEntity"],
+      "properties": {
+        "name": "IfcPile"
+      }
+    },
+    {
+      "id": "bim:ifc_slab",
+      "labels": ["BIMEntity"],
+      "properties": {
+        "name": "IfcSlab",
+        "requiredCondition": "FloorType.IsFoundationSlab=True"
+      }
+    },
+    {
+      "id": "classification:uniformat:a1010",
+      "labels": ["ClassificationCode", "UniFormatCode"],
+      "properties": {
+        "scheme": "UNIFORMAT",
+        "code": "A1010",
+        "title": "Standard Foundations",
+        "mappingStatus": "observed_in_case2",
+        "authorityStatus": "project_evidence_not_master_catalogue"
+      }
+    },
+    {
+      "id": "costcode:eit:1_1_01",
+      "labels": ["CostCode", "EITCostCode"],
+      "properties": {
+        "scheme": "EIT",
+        "code": "1 1 01",
+        "nameTh": "งานเสาเข็ม",
+        "nameEn": "PILING WORK"
+      }
+    },
+    {
+      "id": "costcode:eit:1_1_02",
+      "labels": ["CostCode", "EITCostCode"],
+      "properties": {
+        "scheme": "EIT",
+        "code": "1 1 02",
+        "nameTh": "งานดิน",
+        "nameEn": "EARTH WORK"
+      }
+    },
+    {
+      "id": "costcode:eit:1_1_03",
+      "labels": ["CostCode", "EITCostCode"],
+      "properties": {
+        "scheme": "EIT",
+        "code": "1 1 03",
+        "nameTh": "คอนกรีตเสริมเหล็ก",
+        "nameEn": "REINFORCED CONCRETE"
+      }
+    },
+    {
+      "id": "boq:S001",
+      "labels": ["BOQItem"],
+      "properties": {
+        "code": "S001",
+        "nameTh": "คอนกรีตฐานรากเดี่ยว / ฐานแผ่",
+        "workGroup": "คอนกรีต",
+        "unit": "m³",
+        "mappingStatus": "matched"
+      }
+    },
+    {
+      "id": "boq:S002",
+      "labels": ["BOQItem"],
+      "properties": {
+        "code": "S002",
+        "nameTh": "คอนกรีตฐานรากแถบ",
+        "workGroup": "คอนกรีต",
+        "unit": "m³",
+        "mappingStatus": "matched"
+      }
+    },
+    {
+      "id": "boq:S003",
+      "labels": ["BOQItem"],
+      "properties": {
+        "code": "S003",
+        "nameTh": "คอนกรีตหัวเสาเข็ม / Pile cap",
+        "workGroup": "คอนกรีต",
+        "unit": "m³",
+        "mappingStatus": "matched"
+      }
+    },
+    {
+      "id": "boq:S004",
+      "labels": ["BOQItem"],
+      "properties": {
+        "code": "S004",
+        "nameTh": "คอนกรีตฐานรากแพ / Raft",
+        "workGroup": "คอนกรีต",
+        "unit": "m³",
+        "mappingStatus": "matched"
+      }
+    },
+    {
+      "id": "boq:S011",
+      "labels": ["BOQItem"],
+      "properties": {
+        "code": "S011",
+        "nameTh": "คอนกรีตเสาเข็มเจาะ",
+        "workGroup": "คอนกรีต",
+        "unit": "m³",
+        "mappingStatus": "matched"
+      }
+    },
+    {
+      "id": "boq:S012",
+      "labels": ["BOQItem"],
+      "properties": {
+        "code": "S012",
+        "nameTh": "เหล็กเสริมฐานราก",
+        "workGroup": "เหล็กเสริม",
+        "unit": "kg",
+        "mappingStatus": "matched"
+      }
+    },
+    {
+      "id": "boq:S013",
+      "labels": ["BOQItem"],
+      "properties": {
+        "code": "S013",
+        "nameTh": "เหล็กเสริมหัวเข็ม / ฐานแพ",
+        "workGroup": "เหล็กเสริม",
+        "unit": "kg",
+        "mappingStatus": "matched"
+      }
+    },
+    {
+      "id": "boq:S021",
+      "labels": ["BOQItem"],
+      "properties": {
+        "code": "S021",
+        "nameTh": "เหล็กกรงเสาเข็ม",
+        "workGroup": "เหล็กเสริม",
+        "unit": "kg",
+        "mappingStatus": "needs_review",
+        "eitCostCode": null
+      }
+    },
+    {
+      "id": "boq:S022",
+      "labels": ["BOQItem"],
+      "properties": {
+        "code": "S022",
+        "nameTh": "แบบหล่อฐานราก / หัวเข็ม",
+        "workGroup": "แบบหล่อ",
+        "unit": "m²",
+        "mappingStatus": "matched"
+      }
+    },
+    {
+      "id": "boq:S028",
+      "labels": ["BOQItem"],
+      "properties": {
+        "code": "S028",
+        "nameTh": "เสาเข็มสำเร็จรูป / ตอก",
+        "workGroup": "เสาเข็ม",
+        "unit": "m",
+        "originalUnitText": "m หรือ nr (เลือกหนึ่ง)",
+        "mappingStatus": "matched"
+      }
+    },
+    {
+      "id": "boq:S034",
+      "labels": ["BOQItem"],
+      "properties": {
+        "code": "S034",
+        "nameTh": "ขุดดินฐานราก / บ่อ",
+        "workGroup": "งานดิน",
+        "unit": "m³",
+        "mappingStatus": "matched"
+      }
+    },
+    {
+      "id": "rule:concrete_volume",
+      "labels": ["MeasurementRule"],
+      "properties": {
+        "ruleId": "FOUNDATION_CONCRETE_VOLUME",
+        "measurementType": "VOLUME",
+        "unit": "m³",
+        "preferredEvidence": "NetVolume or material concrete volume",
+        "status": "project_specific",
+        "notes": "Do not double-deduct openings already represented by net geometry."
+      }
+    },
+    {
+      "id": "rule:reinforcement_weight",
+      "labels": ["MeasurementRule"],
+      "properties": {
+        "ruleId": "FOUNDATION_REINFORCEMENT_WEIGHT",
+        "measurementType": "WEIGHT",
+        "unit": "kg",
+        "preferredEvidence": null,
+        "status": "blocked_pending_source_unit_confirmation",
+        "notes": "Quantity remains null when Volume and UnitWeight conversion cannot be confirmed."
+      }
+    },
+    {
+      "id": "rule:formwork_area",
+      "labels": ["MeasurementRule"],
+      "properties": {
+        "ruleId": "FOUNDATION_FORMWORK_AREA",
+        "measurementType": "AREA",
+        "unit": "m²",
+        "preferredEvidence": null,
+        "status": "project_specific"
+      }
+    },
+    {
+      "id": "rule:pile_length",
+      "labels": ["MeasurementRule"],
+      "properties": {
+        "ruleId": "PRECAST_PILE_LENGTH",
+        "measurementType": "LENGTH",
+        "unit": "m",
+        "preferredEvidence": "Element.Length",
+        "status": "usable_with_issue",
+        "notes": "Default to model length; contract basis per metre or per pile must be confirmed."
+      }
+    },
+    {
+      "id": "rule:excavation_volume",
+      "labels": ["MeasurementRule"],
+      "properties": {
+        "ruleId": "FOUNDATION_EXCAVATION_VOLUME",
+        "measurementType": "VOLUME",
+        "unit": "m³",
+        "preferredEvidence": null,
+        "status": "project_specific"
+      }
+    },
+    {
+      "id": "issue:element_type_not_in_spec",
+      "labels": ["Issue"],
+      "properties": {
+        "code": "ELEMENT_TYPE_NOT_IN_SPEC",
+        "severity": "warning",
+        "description": "The concept is identified but no confirmed BOQ item exists in the current rulebook."
+      }
+    },
+    {
+      "id": "issue:eit_confirmation",
+      "labels": ["Issue"],
+      "properties": {
+        "code": "EIT_COSTCODE_NEEDS_CONFIRMATION",
+        "severity": "warning",
+        "description": "The EIT candidate exists but must not be emitted as a confirmed cost code."
+      }
+    },
+    {
+      "id": "issue:unit_basis_ambiguous",
+      "labels": ["Issue"],
+      "properties": {
+        "code": "UNIT_BASIS_AMBIGUOUS",
+        "severity": "warning",
+        "description": "The price basis per metre or per pile must be confirmed from the contract or pricebook."
+      }
+    },
+    {
+      "id": "issue:missing_measure",
+      "labels": ["Issue"],
+      "properties": {
+        "code": "MISSING_MEASURE",
+        "severity": "error",
+        "description": "A required measurable value or confirmed unit conversion is unavailable."
+      }
+    }
+  ],
+  "relationships": [
+    {"id": "r001", "type": "IS_A", "from": "concept:shallow_foundation", "to": "concept:foundation_system", "properties": {"status": "confirmed_for_poc"}},
+    {"id": "r002", "type": "IS_A", "from": "concept:deep_foundation", "to": "concept:foundation_system", "properties": {"status": "confirmed_for_poc"}},
+    {"id": "r003", "type": "IS_A", "from": "concept:isolated_footing", "to": "concept:shallow_foundation", "properties": {"status": "confirmed_for_poc"}},
+    {"id": "r004", "type": "IS_A", "from": "concept:strip_footing", "to": "concept:shallow_foundation", "properties": {"status": "confirmed_for_poc"}},
+    {"id": "r005", "type": "IS_A", "from": "concept:raft_foundation", "to": "concept:shallow_foundation", "properties": {"status": "confirmed_for_poc"}},
+    {"id": "r006", "type": "IS_A", "from": "concept:pile_foundation", "to": "concept:deep_foundation", "properties": {"status": "confirmed_for_poc"}},
+    {"id": "r007", "type": "PART_OF", "from": "concept:pile", "to": "concept:pile_foundation", "properties": {"status": "confirmed_for_poc"}},
+    {"id": "r008", "type": "IS_A", "from": "concept:bored_pile", "to": "concept:pile", "properties": {"status": "confirmed_for_poc"}},
+    {"id": "r009", "type": "IS_A", "from": "concept:precast_driven_pile", "to": "concept:pile", "properties": {"status": "confirmed_for_poc"}},
+    {"id": "r010", "type": "PART_OF", "from": "concept:pile_cap", "to": "concept:pile_foundation", "properties": {"status": "confirmed_for_poc"}},
+    {"id": "r011", "type": "PART_OF", "from": "concept:pedestal", "to": "concept:foundation_system", "properties": {"status": "unconfirmed", "note": "Exact engineering scope and BOQ work item require expert confirmation."}},
+    {"id": "r012", "type": "PART_OF", "from": "concept:foundation_excavation", "to": "concept:foundation_system", "properties": {"status": "confirmed_for_poc"}},
+
+    {"id": "r020", "type": "APPLIES_TO_BIM_ENTITY", "from": "concept:isolated_footing", "to": "bim:ifc_footing", "properties": {"status": "rulebook"}},
+    {"id": "r021", "type": "APPLIES_TO_BIM_ENTITY", "from": "concept:strip_footing", "to": "bim:ifc_footing", "properties": {"status": "rulebook"}},
+    {"id": "r022", "type": "APPLIES_TO_BIM_ENTITY", "from": "concept:pile_cap", "to": "bim:ifc_footing", "properties": {"status": "rulebook"}},
+    {"id": "r023", "type": "APPLIES_TO_BIM_ENTITY", "from": "concept:raft_foundation", "to": "bim:ifc_slab", "properties": {"status": "project_rule", "condition": "FloorType.IsFoundationSlab=True"}},
+    {"id": "r024", "type": "APPLIES_TO_BIM_ENTITY", "from": "concept:bored_pile", "to": "bim:ifc_pile", "properties": {"status": "rulebook"}},
+    {"id": "r025", "type": "APPLIES_TO_BIM_ENTITY", "from": "concept:precast_driven_pile", "to": "bim:ifc_pile", "properties": {"status": "rulebook"}},
+
+    {"id": "r030", "type": "CLASSIFIED_AS", "from": "concept:isolated_footing", "to": "classification:uniformat:a1010", "properties": {"status": "case2_candidate_bucket"}},
+    {"id": "r031", "type": "CLASSIFIED_AS", "from": "concept:strip_footing", "to": "classification:uniformat:a1010", "properties": {"status": "case2_candidate_bucket"}},
+    {"id": "r032", "type": "CLASSIFIED_AS", "from": "concept:pile_cap", "to": "classification:uniformat:a1010", "properties": {"status": "case2_candidate_bucket"}},
+    {"id": "r033", "type": "CLASSIFIED_AS", "from": "concept:raft_foundation", "to": "classification:uniformat:a1010", "properties": {"status": "case2_candidate_bucket"}},
+    {"id": "r034", "type": "CLASSIFIED_AS", "from": "concept:bored_pile", "to": "classification:uniformat:a1010", "properties": {"status": "case2_candidate_bucket"}},
+
+    {"id": "r040", "type": "GENERATES_WORK_ITEM", "from": "concept:isolated_footing", "to": "boq:S001", "properties": {"component": "concrete", "status": "confirmed"}},
+    {"id": "r041", "type": "GENERATES_WORK_ITEM", "from": "concept:isolated_footing", "to": "boq:S012", "properties": {"component": "reinforcement", "status": "confirmed"}},
+    {"id": "r042", "type": "GENERATES_WORK_ITEM", "from": "concept:isolated_footing", "to": "boq:S022", "properties": {"component": "formwork", "status": "confirmed"}},
+    {"id": "r043", "type": "GENERATES_WORK_ITEM", "from": "concept:strip_footing", "to": "boq:S002", "properties": {"component": "concrete", "status": "confirmed"}},
+    {"id": "r044", "type": "GENERATES_WORK_ITEM", "from": "concept:strip_footing", "to": "boq:S012", "properties": {"component": "reinforcement", "status": "confirmed"}},
+    {"id": "r045", "type": "GENERATES_WORK_ITEM", "from": "concept:strip_footing", "to": "boq:S022", "properties": {"component": "formwork", "status": "confirmed"}},
+    {"id": "r046", "type": "GENERATES_WORK_ITEM", "from": "concept:raft_foundation", "to": "boq:S004", "properties": {"component": "concrete", "status": "confirmed"}},
+    {"id": "r047", "type": "GENERATES_WORK_ITEM", "from": "concept:raft_foundation", "to": "boq:S013", "properties": {"component": "reinforcement", "status": "confirmed"}},
+    {"id": "r048", "type": "GENERATES_WORK_ITEM", "from": "concept:pile_cap", "to": "boq:S003", "properties": {"component": "concrete", "status": "confirmed"}},
+    {"id": "r049", "type": "GENERATES_WORK_ITEM", "from": "concept:pile_cap", "to": "boq:S013", "properties": {"component": "reinforcement", "status": "confirmed"}},
+    {"id": "r050", "type": "GENERATES_WORK_ITEM", "from": "concept:pile_cap", "to": "boq:S022", "properties": {"component": "formwork", "status": "confirmed"}},
+    {"id": "r051", "type": "GENERATES_WORK_ITEM", "from": "concept:bored_pile", "to": "boq:S011", "properties": {"component": "concrete", "status": "confirmed"}},
+    {"id": "r052", "type": "GENERATES_WORK_ITEM", "from": "concept:bored_pile", "to": "boq:S021", "properties": {"component": "reinforcement_cage", "status": "needs_review"}},
+    {"id": "r053", "type": "GENERATES_WORK_ITEM", "from": "concept:precast_driven_pile", "to": "boq:S028", "properties": {"component": "pile", "status": "confirmed"}},
+    {"id": "r054", "type": "GENERATES_WORK_ITEM", "from": "concept:foundation_excavation", "to": "boq:S034", "properties": {"component": "earthwork", "status": "confirmed"}},
+
+    {"id": "r060", "type": "MAPS_TO_COST_CODE", "from": "boq:S001", "to": "costcode:eit:1_1_03", "properties": {"status": "matched", "source": "boq_to_eit_mapping.json"}},
+    {"id": "r061", "type": "MAPS_TO_COST_CODE", "from": "boq:S002", "to": "costcode:eit:1_1_03", "properties": {"status": "matched", "source": "boq_to_eit_mapping.json"}},
+    {"id": "r062", "type": "MAPS_TO_COST_CODE", "from": "boq:S003", "to": "costcode:eit:1_1_03", "properties": {"status": "matched", "source": "boq_to_eit_mapping.json"}},
+    {"id": "r063", "type": "MAPS_TO_COST_CODE", "from": "boq:S004", "to": "costcode:eit:1_1_03", "properties": {"status": "matched", "source": "boq_to_eit_mapping.json"}},
+    {"id": "r064", "type": "MAPS_TO_COST_CODE", "from": "boq:S011", "to": "costcode:eit:1_1_01", "properties": {"status": "matched", "source": "boq_to_eit_mapping.json"}},
+    {"id": "r065", "type": "MAPS_TO_COST_CODE", "from": "boq:S012", "to": "costcode:eit:1_1_03", "properties": {"status": "matched", "source": "boq_to_eit_mapping.json"}},
+    {"id": "r066", "type": "MAPS_TO_COST_CODE", "from": "boq:S013", "to": "costcode:eit:1_1_03", "properties": {"status": "matched", "source": "boq_to_eit_mapping.json"}},
+    {"id": "r067", "type": "CANDIDATE_COST_CODE", "from": "boq:S021", "to": "costcode:eit:1_1_01", "properties": {"status": "needs_review", "source": "boq_to_eit_mapping.json", "emitAsConfirmed": false}},
+    {"id": "r068", "type": "MAPS_TO_COST_CODE", "from": "boq:S022", "to": "costcode:eit:1_1_03", "properties": {"status": "matched", "source": "boq_to_eit_mapping.json"}},
+    {"id": "r069", "type": "MAPS_TO_COST_CODE", "from": "boq:S028", "to": "costcode:eit:1_1_01", "properties": {"status": "matched", "source": "boq_to_eit_mapping.json"}},
+    {"id": "r070", "type": "MAPS_TO_COST_CODE", "from": "boq:S034", "to": "costcode:eit:1_1_02", "properties": {"status": "matched", "source": "boq_to_eit_mapping.json"}},
+
+    {"id": "r080", "type": "MEASURED_BY", "from": "boq:S001", "to": "rule:concrete_volume", "properties": {"status": "rulebook"}},
+    {"id": "r081", "type": "MEASURED_BY", "from": "boq:S002", "to": "rule:concrete_volume", "properties": {"status": "rulebook"}},
+    {"id": "r082", "type": "MEASURED_BY", "from": "boq:S003", "to": "rule:concrete_volume", "properties": {"status": "rulebook"}},
+    {"id": "r083", "type": "MEASURED_BY", "from": "boq:S004", "to": "rule:concrete_volume", "properties": {"status": "rulebook"}},
+    {"id": "r084", "type": "MEASURED_BY", "from": "boq:S011", "to": "rule:concrete_volume", "properties": {"status": "rulebook"}},
+    {"id": "r085", "type": "MEASURED_BY", "from": "boq:S012", "to": "rule:reinforcement_weight", "properties": {"status": "blocked_pending_unit_confirmation"}},
+    {"id": "r086", "type": "MEASURED_BY", "from": "boq:S013", "to": "rule:reinforcement_weight", "properties": {"status": "blocked_pending_unit_confirmation"}},
+    {"id": "r087", "type": "MEASURED_BY", "from": "boq:S021", "to": "rule:reinforcement_weight", "properties": {"status": "blocked_pending_unit_confirmation"}},
+    {"id": "r088", "type": "MEASURED_BY", "from": "boq:S022", "to": "rule:formwork_area", "properties": {"status": "project_specific"}},
+    {"id": "r089", "type": "MEASURED_BY", "from": "boq:S028", "to": "rule:pile_length", "properties": {"status": "usable_with_issue"}},
+    {"id": "r090", "type": "MEASURED_BY", "from": "boq:S034", "to": "rule:excavation_volume", "properties": {"status": "project_specific"}},
+
+    {"id": "r100", "type": "HAS_ISSUE", "from": "concept:pedestal", "to": "issue:element_type_not_in_spec", "properties": {"reason": "No dedicated pedestal work item exists in the current 114-item rulebook."}},
+    {"id": "r101", "type": "HAS_ISSUE", "from": "boq:S021", "to": "issue:eit_confirmation", "properties": {"reason": "The BOQ-to-EIT mapping status is needs_review."}},
+    {"id": "r102", "type": "HAS_ISSUE", "from": "boq:S021", "to": "issue:missing_measure", "properties": {"reason": "Weight conversion cannot be confirmed from current source units."}},
+    {"id": "r103", "type": "HAS_ISSUE", "from": "boq:S028", "to": "issue:unit_basis_ambiguous", "properties": {"reason": "Contract or pricebook must confirm per-metre or per-pile pricing."}},
+    {"id": "r104", "type": "HAS_ISSUE", "from": "boq:S012", "to": "issue:missing_measure", "properties": {"reason": "Weight conversion cannot be confirmed from current source units."}},
+    {"id": "r105", "type": "HAS_ISSUE", "from": "boq:S013", "to": "issue:missing_measure", "properties": {"reason": "Weight conversion cannot be confirmed from current source units."}}
+  ]
+}
