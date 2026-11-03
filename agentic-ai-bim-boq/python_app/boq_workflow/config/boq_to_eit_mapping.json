@@ -1,0 +1,695 @@
+{
+  "version": "boq-bim-thai-to-eit-costcode-1.0",
+  "description": "การจับคู่รหัสรายการ (S/A/M) ใน BOQ_BIM_Thai.xlsx เข้ากับ EIT Cost Code (วสท.) ระดับ SubGroup",
+  "matchStatusLegend": {
+    "matched": "พบตัวอย่างรายการตรงหรือใกล้เคียงมากในเอกสาร EIT Cost Code",
+    "needs_review": "จับคู่ได้แต่ขอบเขตซ้อนทับหรือแยกยากระหว่างสองกลุ่ม ต้องยืนยันตามการออกแบบจริงของโครงการ",
+    "unresolved": "ไม่พบรหัสย่อย EIT ที่ตรงในเอกสารที่ตรวจสอบ (170 หน้า, สุ่มดูเฉพาะส่วนที่เกี่ยวข้อง) ต้องเปิดหมวดใหม่หรือขอคำยืนยันจากผู้เชี่ยวชาญ"
+  },
+  "mappings": [
+    {
+      "code": "S001",
+      "eitSubGroupCode": "1 1 03",
+      "matchStatus": "matched",
+      "note": "คอนกรีตฐานราก = Reinforced Concrete, sub-structure"
+    },
+    {
+      "code": "S002",
+      "eitSubGroupCode": "1 1 03",
+      "matchStatus": "matched",
+      "note": "คอนกรีตฐานรากแถบ = Reinforced Concrete, sub-structure"
+    },
+    {
+      "code": "S003",
+      "eitSubGroupCode": "1 1 03",
+      "matchStatus": "matched",
+      "note": "หัวเสาเข็ม/Pile cap = Reinforced Concrete, sub-structure"
+    },
+    {
+      "code": "S004",
+      "eitSubGroupCode": "1 1 03",
+      "matchStatus": "matched",
+      "note": "ฐานรากแพ/Raft = Reinforced Concrete, sub-structure"
+    },
+    {
+      "code": "S005",
+      "eitSubGroupCode": "1 2 01",
+      "matchStatus": "matched",
+      "note": "เสา = Reinforced Concrete, super-structure"
+    },
+    {
+      "code": "S006",
+      "eitSubGroupCode": "1 2 01",
+      "matchStatus": "needs_review",
+      "note": "คาน = super-structure RC; แต่คานคอดิน (ground beam) อาจเข้าข่าย 1 1 03 sub-structure แล้วแต่โครงการ"
+    },
+    {
+      "code": "S007",
+      "eitSubGroupCode": "1 2 01",
+      "matchStatus": "matched",
+      "note": "พื้น/ชานพัก = Reinforced Concrete, super-structure"
+    },
+    {
+      "code": "S008",
+      "eitSubGroupCode": "1 2 01",
+      "matchStatus": "needs_review",
+      "note": "ผนังรับแรง(super-structure)/กำแพงกันดิน(sub-structure 1 1 03) — แยกตามชนิดจริง"
+    },
+    {
+      "code": "S009",
+      "eitSubGroupCode": "1 2 01",
+      "matchStatus": "matched",
+      "note": "บันไดช่วงลาด (RC) = super-structure"
+    },
+    {
+      "code": "S010",
+      "eitSubGroupCode": "1 1 02",
+      "matchStatus": "matched",
+      "note": "คอนกรีตรองพื้น/Blinding ตรงกับตัวอย่าง Lean Concrete ใน Fill Material (งานดิน)"
+    },
+    {
+      "code": "S011",
+      "eitSubGroupCode": "1 1 01",
+      "matchStatus": "matched",
+      "note": "เสาเข็มเจาะ = Piling Work"
+    },
+    {
+      "code": "S012",
+      "eitSubGroupCode": "1 1 03",
+      "matchStatus": "matched",
+      "note": "เหล็กเสริมฐานราก = Reinforcing Bar, sub-structure"
+    },
+    {
+      "code": "S013",
+      "eitSubGroupCode": "1 1 03",
+      "matchStatus": "matched",
+      "note": "เหล็กเสริมหัวเข็ม/ฐานแพ = Reinforcing Bar, sub-structure"
+    },
+    {
+      "code": "S014",
+      "eitSubGroupCode": "1 2 01",
+      "matchStatus": "matched",
+      "note": "เหล็กยืนเสา = Reinforcing Bar, super-structure"
+    },
+    {
+      "code": "S015",
+      "eitSubGroupCode": "1 2 01",
+      "matchStatus": "matched",
+      "note": "เหล็กปลอกเสา = Reinforcing Bar, super-structure"
+    },
+    {
+      "code": "S016",
+      "eitSubGroupCode": "1 2 01",
+      "matchStatus": "matched",
+      "note": "เหล็กหลักคาน = Reinforcing Bar, super-structure"
+    },
+    {
+      "code": "S017",
+      "eitSubGroupCode": "1 2 01",
+      "matchStatus": "matched",
+      "note": "เหล็กปลอกคาน = Reinforcing Bar, super-structure"
+    },
+    {
+      "code": "S018",
+      "eitSubGroupCode": "1 2 01",
+      "matchStatus": "matched",
+      "note": "เหล็กพื้น = Reinforcing Bar, super-structure"
+    },
+    {
+      "code": "S019",
+      "eitSubGroupCode": "1 2 01",
+      "matchStatus": "needs_review",
+      "note": "เหล็กผนัง — ตรวจว่าเป็นผนังรับแรง(1 2 01)หรือกำแพงกันดิน(1 1 03)"
+    },
+    {
+      "code": "S020",
+      "eitSubGroupCode": "1 2 01",
+      "matchStatus": "matched",
+      "note": "เหล็กบันได = Reinforcing Bar, super-structure"
+    },
+    {
+      "code": "S021",
+      "eitSubGroupCode": "1 1 01",
+      "matchStatus": "needs_review",
+      "note": "เหล็กกรงเสาเข็ม อยู่ในงานเสาเข็ม (1 1 01) แต่ไม่มีรหัสย่อยเหล็กเสริมแยกในเอกสาร"
+    },
+    {
+      "code": "S022",
+      "eitSubGroupCode": "1 1 03",
+      "matchStatus": "matched",
+      "note": "แบบหล่อฐานราก/หัวเข็ม = Form Work, sub-structure"
+    },
+    {
+      "code": "S023",
+      "eitSubGroupCode": "1 2 01",
+      "matchStatus": "matched",
+      "note": "แบบหล่อเสา = Form Work, super-structure"
+    },
+    {
+      "code": "S024",
+      "eitSubGroupCode": "1 2 01",
+      "matchStatus": "matched",
+      "note": "แบบหล่อคาน = Form Work, super-structure"
+    },
+    {
+      "code": "S025",
+      "eitSubGroupCode": "1 2 01",
+      "matchStatus": "matched",
+      "note": "แบบหล่อท้องพื้น/ขอบพื้น = Form Work, super-structure"
+    },
+    {
+      "code": "S026",
+      "eitSubGroupCode": "1 2 01",
+      "matchStatus": "needs_review",
+      "note": "แบบหล่อผนัง — sub หรือ super แล้วแต่ผนังชนิดใด"
+    },
+    {
+      "code": "S027",
+      "eitSubGroupCode": "1 2 01",
+      "matchStatus": "matched",
+      "note": "แบบหล่อบันได = Form Work, super-structure"
+    },
+    {
+      "code": "S028",
+      "eitSubGroupCode": "1 1 01",
+      "matchStatus": "matched",
+      "note": "เสาเข็มสำเร็จรูป/ตอก ตรงกับตัวอย่าง Driven Pile"
+    },
+    {
+      "code": "S029",
+      "eitSubGroupCode": "1 2 01",
+      "matchStatus": "needs_review",
+      "note": "ตะแกรงเหล็กสำเร็จ/Mesh — ไม่มีรหัสย่อยเฉพาะ ใช้กลุ่ม Reinforcing Bar ที่ใกล้เคียงที่สุด"
+    },
+    {
+      "code": "S030",
+      "eitSubGroupCode": "1 2 01",
+      "matchStatus": "needs_review",
+      "note": "ข้อต่อเหล็ก/Coupler — ไม่มีรหัสย่อยเฉพาะ อยู่ในกลุ่มเหล็กเสริมที่ใกล้เคียง"
+    },
+    {
+      "code": "S031",
+      "eitSubGroupCode": null,
+      "matchStatus": "unresolved",
+      "note": "เหล็กโครงสร้างหลัก/แป/ค้ำยัน (structural steel) — ไม่พบรหัสย่อยเฉพาะในเอกสารที่ตรวจสอบ ต้องยืนยันเพิ่มหรือเปิดหมวดใหม่"
+    },
+    {
+      "code": "S032",
+      "eitSubGroupCode": null,
+      "matchStatus": "unresolved",
+      "note": "แผ่นเหล็ก/Base plate/Gusset — ไม่พบรหัสย่อยเฉพาะ"
+    },
+    {
+      "code": "S033",
+      "eitSubGroupCode": null,
+      "matchStatus": "unresolved",
+      "note": "สลักเกลียว/Anchor bolt — ไม่พบรหัสย่อยเฉพาะ"
+    },
+    {
+      "code": "S034",
+      "eitSubGroupCode": "1 1 02",
+      "matchStatus": "matched",
+      "note": "ขุดดินฐานราก/บ่อ ตรงกับ Footing excavation"
+    },
+    {
+      "code": "S035",
+      "eitSubGroupCode": "1 1 02",
+      "matchStatus": "matched",
+      "note": "ถมกลับ/วัสดุถมบดอัด ตรงกับ Back fill with excavated soil"
+    },
+    {
+      "code": "S036",
+      "eitSubGroupCode": null,
+      "matchStatus": "unresolved",
+      "note": "ชิ้นส่วนคอนกรีตสำเร็จรูป (precast) — ไม่พบรหัสย่อยเฉพาะในเอกสารที่ตรวจสอบ"
+    },
+    {
+      "code": "A001",
+      "eitSubGroupCode": "2 1 02",
+      "matchStatus": "matched",
+      "note": "ผนังก่ออิฐ/บล็อก ตรงกับ Wall Structure (Half/Full Morn brick)"
+    },
+    {
+      "code": "A002",
+      "eitSubGroupCode": "2 1 02",
+      "matchStatus": "matched",
+      "note": "ผนังเบา/Partition = Wall Structure/Partition"
+    },
+    {
+      "code": "A003",
+      "eitSubGroupCode": "2 1 02",
+      "matchStatus": "matched",
+      "note": "ฉาบผนังภายใน ตรงกับ Wall Finish (Wall plaster)"
+    },
+    {
+      "code": "A004",
+      "eitSubGroupCode": "2 2 02",
+      "matchStatus": "matched",
+      "note": "ฉาบผนังภายนอก ตรงกับ Exterior Wall (Plaster & Paint)"
+    },
+    {
+      "code": "A005",
+      "eitSubGroupCode": "2 1 02",
+      "matchStatus": "matched",
+      "note": "ทาสีผนังภายใน ตรงกับ Interior Paint./Wall"
+    },
+    {
+      "code": "A006",
+      "eitSubGroupCode": "2 2 02",
+      "matchStatus": "matched",
+      "note": "ทาสีผนังภายนอก รวมอยู่ใน Exterior Wall (Plaster & Paint)"
+    },
+    {
+      "code": "A007",
+      "eitSubGroupCode": "2 1 02",
+      "matchStatus": "matched",
+      "note": "กระเบื้องผนัง/แผ่นกรุ = Wall Finish (ceramic tile)"
+    },
+    {
+      "code": "A008",
+      "eitSubGroupCode": "2 1 01",
+      "matchStatus": "matched",
+      "note": "วัสดุปูพื้น/กระเบื้อง/หิน = Floor"
+    },
+    {
+      "code": "A009",
+      "eitSubGroupCode": "2 1 01",
+      "matchStatus": "matched",
+      "note": "พื้นไม้/Vinyl/Carpet = Floor"
+    },
+    {
+      "code": "A010",
+      "eitSubGroupCode": "2 1 01",
+      "matchStatus": "matched",
+      "note": "ชั้นปรับระดับ/Screed ตรงกับ Floor mortar bedding"
+    },
+    {
+      "code": "A011",
+      "eitSubGroupCode": "2 1 01",
+      "matchStatus": "matched",
+      "note": "เคลือบพื้น/Epoxy ใกล้เคียง Waterproof/Acrylic coating ใน Floor"
+    },
+    {
+      "code": "A012",
+      "eitSubGroupCode": "2 1 03",
+      "matchStatus": "matched",
+      "note": "ฝ้าเพดานเรียบ = Ceiling"
+    },
+    {
+      "code": "A013",
+      "eitSubGroupCode": "2 1 03",
+      "matchStatus": "needs_review",
+      "note": "ฝ้าผิวตั้ง/Bulkhead — ไม่มีรหัสย่อยแยกเฉพาะ bulkhead ใช้กลุ่ม Ceiling ที่ใกล้เคียง"
+    },
+    {
+      "code": "A014",
+      "eitSubGroupCode": "2 1 03",
+      "matchStatus": "matched",
+      "note": "ทาสีฝ้า/ท้องคาน/ท้องพื้น ตรงกับ Interior Paint./Ceiling"
+    },
+    {
+      "code": "A015",
+      "eitSubGroupCode": "2 1 01",
+      "matchStatus": "needs_review",
+      "note": "กันซึมพื้น/ดาดฟ้า ใกล้เคียง Waterproof system ใน Floor; ดาดฟ้าอาจเข้าข่ายหลังคา (2 2 06)"
+    },
+    {
+      "code": "A016",
+      "eitSubGroupCode": "2 1 02",
+      "matchStatus": "needs_review",
+      "note": "กันซึมผนัง/Upstand — พบตัวอย่างเฉพาะในห้องน้ำ (2 1 06 Waterproof LANKO) ใช้เป็นแนวทางใกล้เคียงที่สุด"
+    },
+    {
+      "code": "A017",
+      "eitSubGroupCode": null,
+      "matchStatus": "unresolved",
+      "note": "ฉนวนผนัง/หลังคา — ไม่พบรหัสย่อยเฉพาะในเอกสารที่ตรวจสอบ"
+    },
+    {
+      "code": "A018",
+      "eitSubGroupCode": "2 2 06",
+      "matchStatus": "matched",
+      "note": "วัสดุมุงหลังคา ตรงกับ Roof Sheet"
+    },
+    {
+      "code": "A019",
+      "eitSubGroupCode": "2 2 02",
+      "matchStatus": "matched",
+      "note": "แผ่นกรุ façade/Cladding = Facade"
+    },
+    {
+      "code": "A020",
+      "eitSubGroupCode": "2 2 02",
+      "matchStatus": "needs_review",
+      "note": "งานกระจก Curtain wall — ไม่มีรหัสย่อยแยกเฉพาะ curtain wall ใช้กลุ่ม Facade ที่ใกล้เคียง"
+    },
+    {
+      "code": "A021",
+      "eitSubGroupCode": "2 1 05",
+      "matchStatus": "matched",
+      "note": "ผิวลูกนอนบันได ตรงกับ Stair/Step"
+    },
+    {
+      "code": "A022",
+      "eitSubGroupCode": "2 1 05",
+      "matchStatus": "matched",
+      "note": "ผิวลูกตั้งบันได ตรงกับ Stair/Riser"
+    },
+    {
+      "code": "A023",
+      "eitSubGroupCode": "2 1 01",
+      "matchStatus": "matched",
+      "note": "บัวเชิงผนัง/Skirting = Skirt"
+    },
+    {
+      "code": "A024",
+      "eitSubGroupCode": "2 1 05",
+      "matchStatus": "matched",
+      "note": "ราวกันตก/ราวบันได ตรงกับ Stair Rail"
+    },
+    {
+      "code": "A025",
+      "eitSubGroupCode": "2 1 05",
+      "matchStatus": "needs_review",
+      "note": "ราวจับ/Handrail — ใกล้เคียง Stair Rail แต่ราวจับทางลาด/ทางเดินอาจอยู่นอกขอบเขตบันได"
+    },
+    {
+      "code": "A026",
+      "eitSubGroupCode": "2 2 06",
+      "matchStatus": "matched",
+      "note": "ครอบ/Flashing/Ridge ตรงกับ Misc. on Roof"
+    },
+    {
+      "code": "A027",
+      "eitSubGroupCode": "2 2 06",
+      "matchStatus": "matched",
+      "note": "รางน้ำ/Gutter ตรงกับ Roof gutter/Curb"
+    },
+    {
+      "code": "A028",
+      "eitSubGroupCode": null,
+      "matchStatus": "unresolved",
+      "note": "วัสดุยาแนว/Sealant joint — ไม่พบรหัสย่อยเฉพาะในเอกสารที่ตรวจสอบ"
+    },
+    {
+      "code": "A029",
+      "eitSubGroupCode": "2 1 04",
+      "matchStatus": "matched",
+      "note": "ประตูพร้อมวงกบ = Door & Windows (Aluminum/Wood/Steel Joinery)"
+    },
+    {
+      "code": "A030",
+      "eitSubGroupCode": "2 1 04",
+      "matchStatus": "matched",
+      "note": "หน้าต่างพร้อมวงกบ = Door & Windows"
+    },
+    {
+      "code": "A031",
+      "eitSubGroupCode": "2 1 04",
+      "matchStatus": "needs_review",
+      "note": "ชุดฮาร์ดแวร์ประตู — ไม่มีรหัสย่อยแยกเฉพาะ hardware ใช้กลุ่ม Door & Windows ที่ใกล้เคียง"
+    },
+    {
+      "code": "A032",
+      "eitSubGroupCode": "2 1 06",
+      "matchStatus": "matched",
+      "note": "สุขภัณฑ์/อุปกรณ์ห้องน้ำ (scope สถาปัตย์) = Toilet Work"
+    },
+    {
+      "code": "A033",
+      "eitSubGroupCode": "3 2 01",
+      "matchStatus": "matched",
+      "note": "ตู้/เฟอร์นิเจอร์ติดตั้งถาวร ตรงกับ Built-in furniture (หมวด 3 ไม่ใช่หมวด 2)"
+    },
+    {
+      "code": "M001",
+      "eitSubGroupCode": "4 1 01",
+      "matchStatus": "matched",
+      "note": "ท่อน้ำดี = Water Supply"
+    },
+    {
+      "code": "M002",
+      "eitSubGroupCode": "4 1 01",
+      "matchStatus": "matched",
+      "note": "ท่อน้ำร้อน/หมุนเวียน ตรงกับ Hot Water Supply"
+    },
+    {
+      "code": "M003",
+      "eitSubGroupCode": "4 1 02",
+      "matchStatus": "matched",
+      "note": "ท่อโสโครก/น้ำเสีย ตรงกับ Soil Waste & Vent Pipe"
+    },
+    {
+      "code": "M004",
+      "eitSubGroupCode": "4 1 02",
+      "matchStatus": "matched",
+      "note": "ท่อระบายอากาศระบบสุขาภิบาล อยู่ในกลุ่ม Soil Waste & Vent Pipe"
+    },
+    {
+      "code": "M005",
+      "eitSubGroupCode": "4 1 02",
+      "matchStatus": "matched",
+      "note": "ท่อน้ำฝน ตรงกับ Storm Drainage system"
+    },
+    {
+      "code": "M006",
+      "eitSubGroupCode": "4 4 02",
+      "matchStatus": "matched",
+      "note": "ท่อน้ำดับเพลิง ตรงกับ Piping System (Fire suppression)"
+    },
+    {
+      "code": "M007",
+      "eitSubGroupCode": "4 4 01",
+      "matchStatus": "matched",
+      "note": "ท่อน้ำเย็น Chilled water = HVAC Piping Work & Accessories"
+    },
+    {
+      "code": "M008",
+      "eitSubGroupCode": "4 4 01",
+      "matchStatus": "needs_review",
+      "note": "ท่อน้ำยาทำความเย็น (refrigerant) ใกล้เคียง HVAC Piping Work แต่ไม่มีรหัสย่อยแยกเฉพาะ"
+    },
+    {
+      "code": "M009",
+      "eitSubGroupCode": "4 4 01",
+      "matchStatus": "needs_review",
+      "note": "ท่อระบายน้ำทิ้งแอร์ อาจเข้าข่าย Drainage (4 1 02) หรือ HVAC Piping (4 4 01) แล้วแต่โครงการ"
+    },
+    {
+      "code": "M010",
+      "eitSubGroupCode": "4 4 03",
+      "matchStatus": "matched",
+      "note": "ท่อก๊าซ/ระบบพิเศษ ตรงกับ Liquid Petroleum Gas System"
+    },
+    {
+      "code": "M011",
+      "eitSubGroupCode": null,
+      "matchStatus": "needs_review",
+      "note": "ข้อต่อท่อ/Elbow/Tee/Reducer — เป็น accessory ให้ใช้รหัสตามระบบท่อที่สังกัด (M001-M010) ไม่ใช่รหัสแยกของตัวเอง"
+    },
+    {
+      "code": "M012",
+      "eitSubGroupCode": null,
+      "matchStatus": "needs_review",
+      "note": "วาล์ว/Strainer/Backflow — ใช้รหัสตามระบบท่อที่สังกัดเช่นกัน"
+    },
+    {
+      "code": "M013",
+      "eitSubGroupCode": "4 1 02",
+      "matchStatus": "matched",
+      "note": "Cleanout/Floor drain/Roof drain = Drainage"
+    },
+    {
+      "code": "M014",
+      "eitSubGroupCode": "4 4 02",
+      "matchStatus": "matched",
+      "note": "หัว Sprinkler/Fire hose/Hydrant ตรงกับ Fire Hydrant & Hose Reel / Sprinkler & Associate Work"
+    },
+    {
+      "code": "M015",
+      "eitSubGroupCode": "4 4 01",
+      "matchStatus": "needs_review",
+      "note": "ฉนวนท่อ — ไม่มีรหัสย่อยแยกเฉพาะ ใช้กลุ่ม HVAC ที่ใกล้เคียงเมื่อเกี่ยวกับ chilled water/refrigerant"
+    },
+    {
+      "code": "M016",
+      "eitSubGroupCode": "4 4 01",
+      "matchStatus": "needs_review",
+      "note": "ผิวฉนวนท่อ/เปลือกหุ้ม — เช่นเดียวกับ M015"
+    },
+    {
+      "code": "M017",
+      "eitSubGroupCode": "4 4 01",
+      "matchStatus": "matched",
+      "note": "ท่อลม (ความยาว) ตรงกับ Duct work"
+    },
+    {
+      "code": "M018",
+      "eitSubGroupCode": "4 4 01",
+      "matchStatus": "matched",
+      "note": "ท่อลมสี่เหลี่ยม/กลม (พื้นที่) ตรงกับ Duct work"
+    },
+    {
+      "code": "M019",
+      "eitSubGroupCode": "4 4 01",
+      "matchStatus": "needs_review",
+      "note": "ข้อต่อท่อลม — ไม่มีรหัสย่อยแยกเฉพาะ ใช้กลุ่ม Duct work ที่ใกล้เคียง"
+    },
+    {
+      "code": "M020",
+      "eitSubGroupCode": "4 4 01",
+      "matchStatus": "needs_review",
+      "note": "ฉนวนท่อลม/Acoustic lining — ไม่มีรหัสย่อยแยกเฉพาะ"
+    },
+    {
+      "code": "M021",
+      "eitSubGroupCode": "4 4 01",
+      "matchStatus": "needs_review",
+      "note": "Damper/Fire damper/VCD — ไม่มีรหัสย่อยแยกเฉพาะ ใช้กลุ่ม HVAC accessories"
+    },
+    {
+      "code": "M022",
+      "eitSubGroupCode": "4 4 01",
+      "matchStatus": "matched",
+      "note": "หัวจ่ายลม/Grille/Diffuser ตรงกับ Diffuser, Grille and register"
+    },
+    {
+      "code": "M023",
+      "eitSubGroupCode": "4 4 01",
+      "matchStatus": "matched",
+      "note": "AHU/FCU/พัดลม ตรงกับ Air Handling Unit, Fan Coil Unit"
+    },
+    {
+      "code": "M024",
+      "eitSubGroupCode": "4 4 01",
+      "matchStatus": "matched",
+      "note": "Chiller/Cooling tower ตรงกับ Chiller & CMPS / Cooling Tower"
+    },
+    {
+      "code": "M025",
+      "eitSubGroupCode": "4 4 02",
+      "matchStatus": "needs_review",
+      "note": "ปั๊มน้ำ/Fire pump/Booster — Fire pump ตรงกับ 4 4 02 01; ปั๊มน้ำใช้ทั่วไป/booster ไม่มีรหัสแยกใน 4 1"
+    },
+    {
+      "code": "M026",
+      "eitSubGroupCode": null,
+      "matchStatus": "unresolved",
+      "note": "ถังเก็บน้ำ/ถังแรงดัน — ไม่พบรหัสย่อยเฉพาะในเอกสารที่ตรวจสอบ"
+    },
+    {
+      "code": "M027",
+      "eitSubGroupCode": "2 1 06",
+      "matchStatus": "needs_review",
+      "note": "สุขภัณฑ์ (scope ระบบสุขาภิบาล) ทับซ้อนกับ A032 ฝั่งสถาปัตย์ (2 1 06) ต้องตกลง scope ว่านับซ้ำหรือไม่"
+    },
+    {
+      "code": "M028",
+      "eitSubGroupCode": "4 2 02",
+      "matchStatus": "matched",
+      "note": "สายไฟกำลัง/สายควบคุม ตรงกับ Main/Sub Feeder (Cable & Wire)"
+    },
+    {
+      "code": "M029",
+      "eitSubGroupCode": "4 3 01",
+      "matchStatus": "needs_review",
+      "note": "สายสื่อสาร/Data/Fire alarm คาบเกี่ยวหลายกลุ่ม (4 3 Communication, 4 2 05 Fire alarm) ต้องแยกตามระบบจริง"
+    },
+    {
+      "code": "M030",
+      "eitSubGroupCode": null,
+      "matchStatus": "unresolved",
+      "note": "ท่อร้อยสาย/Conduit — ไม่พบรหัสย่อยแยกเฉพาะ (เป็นส่วนประกอบของงานไฟฟ้า 4 2)"
+    },
+    {
+      "code": "M031",
+      "eitSubGroupCode": null,
+      "matchStatus": "unresolved",
+      "note": "รางสาย/Cable tray/Ladder — ไม่พบรหัสย่อยแยกเฉพาะ"
+    },
+    {
+      "code": "M032",
+      "eitSubGroupCode": null,
+      "matchStatus": "unresolved",
+      "note": "ข้อต่อท่อร้อยสาย/กล่องพัก — ไม่พบรหัสย่อยแยกเฉพาะ"
+    },
+    {
+      "code": "M033",
+      "eitSubGroupCode": null,
+      "matchStatus": "unresolved",
+      "note": "ข้อต่อราง/ฝาราง/Divider — ไม่พบรหัสย่อยแยกเฉพาะ"
+    },
+    {
+      "code": "M034",
+      "eitSubGroupCode": "4 2 02",
+      "matchStatus": "matched",
+      "note": "ตู้ MDB/DB/Panelboard ตรงกับ Main Distribution Board / Distribution Board / Panel board"
+    },
+    {
+      "code": "M035",
+      "eitSubGroupCode": "4 2 02",
+      "matchStatus": "matched",
+      "note": "Transformer/Generator/UPS ตรงกับ Power Generator / UPS"
+    },
+    {
+      "code": "M036",
+      "eitSubGroupCode": "4 2 03",
+      "matchStatus": "matched",
+      "note": "โคมไฟ/Emergency light ตรงกับ Lighting Fixture"
+    },
+    {
+      "code": "M037",
+      "eitSubGroupCode": "4 2 03",
+      "matchStatus": "matched",
+      "note": "สวิตช์/เต้ารับ/Isolator ตรงกับ Switch, Outlet and CB Box"
+    },
+    {
+      "code": "M038",
+      "eitSubGroupCode": "4 2 05",
+      "matchStatus": "matched",
+      "note": "Detector/Manual call/Sounder ตรงกับ Fire Alarm System"
+    },
+    {
+      "code": "M039",
+      "eitSubGroupCode": "4 3 05",
+      "matchStatus": "matched",
+      "note": "CCTV/Access control/Data outlet ตรงกับ Security (CCTV/Access Control)"
+    },
+    {
+      "code": "M040",
+      "eitSubGroupCode": "4 2 04",
+      "matchStatus": "matched",
+      "note": "หลักดิน/Air terminal/Test link ตรงกับ Ground & Lightning"
+    },
+    {
+      "code": "M041",
+      "eitSubGroupCode": null,
+      "matchStatus": "unresolved",
+      "note": "Hanger/Support/Bracket — เป็น accessory ทั่วไปข้ามระบบ ไม่มีรหัสเฉพาะ"
+    },
+    {
+      "code": "M042",
+      "eitSubGroupCode": null,
+      "matchStatus": "unresolved",
+      "note": "Sleeve/Firestop/Penetration seal — ไม่พบรหัสย่อยแยกเฉพาะ"
+    },
+    {
+      "code": "M043",
+      "eitSubGroupCode": "4 5 01",
+      "matchStatus": "matched",
+      "note": "ลิฟต์/บันไดเลื่อน ตรงกับ Elevator (Passenger/Service/Fire man Lift)"
+    },
+    {
+      "code": "M044",
+      "eitSubGroupCode": "4 2 04",
+      "matchStatus": "matched",
+      "note": "ตัวนำสายดิน/Lightning conductor ตรงกับ Lightning Protection System"
+    },
+    {
+      "code": "M045",
+      "eitSubGroupCode": null,
+      "matchStatus": "unresolved",
+      "note": "Testing/Commissioning/Balancing — ไม่มีรหัส EIT ระดับรายการงานสำหรับงานทดสอบ/ส่งมอบ มักอยู่ใน ค่าใช้จ่ายทางอ้อม (0 2) ของโครงการแทน"
+    }
+  ]
+}

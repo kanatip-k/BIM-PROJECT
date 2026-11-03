@@ -1,0 +1,339 @@
+{
+  "version": "boq-field-roles-1.0",
+  "description": "Explicit roles for all dataDictionary fields. Evidence needs source proof; pipeline-produced fields are checked only after their producer stage. PROJECT_RULES remains pending Phase 5.",
+  "fieldRoles": {
+    "AddBackQty": {
+      "role": "pipeline-produced",
+      "checkAfter": "PROJECT_RULES"
+    },
+    "Area": {
+      "role": "evidence"
+    },
+    "AreaBasis": {
+      "role": "pipeline-produced",
+      "checkAfter": "QUANTIFY"
+    },
+    "AssemblyScope": {
+      "role": "evidence"
+    },
+    "BOQCode": {
+      "role": "pipeline-produced",
+      "checkAfter": "CLASSIFY"
+    },
+    "BarCount": {
+      "role": "evidence"
+    },
+    "BarLength": {
+      "role": "evidence"
+    },
+    "BarShape": {
+      "role": "evidence"
+    },
+    "BoltLength": {
+      "role": "evidence"
+    },
+    "BulkingFactor": {
+      "role": "pipeline-produced",
+      "checkAfter": "PROJECT_RULES"
+    },
+    "CableSize": {
+      "role": "evidence"
+    },
+    "CableType": {
+      "role": "evidence"
+    },
+    "CapacitySpec": {
+      "role": "evidence"
+    },
+    "CladdingType": {
+      "role": "evidence"
+    },
+    "CoatingSystem": {
+      "role": "evidence"
+    },
+    "CompactionBasis": {
+      "role": "evidence"
+    },
+    "ConcreteGrade": {
+      "role": "evidence"
+    },
+    "ConnectionType": {
+      "role": "evidence"
+    },
+    "ContactArea": {
+      "role": "evidence"
+    },
+    "CoreSpec": {
+      "role": "evidence"
+    },
+    "Count": {
+      "role": "evidence"
+    },
+    "CountBasis": {
+      "role": "pipeline-produced",
+      "checkAfter": "QUANTIFY"
+    },
+    "CouplerType": {
+      "role": "evidence"
+    },
+    "CutoffLevel": {
+      "role": "evidence"
+    },
+    "DeductQty": {
+      "role": "pipeline-produced",
+      "checkAfter": "PROJECT_RULES"
+    },
+    "DeliverableRef": {
+      "role": "evidence"
+    },
+    "Density": {
+      "role": "evidence"
+    },
+    "DepthBand": {
+      "role": "evidence"
+    },
+    "DesignOption": {
+      "role": "evidence"
+    },
+    "DewateringScope": {
+      "role": "evidence"
+    },
+    "Diameter": {
+      "role": "evidence"
+    },
+    "DrawingRef": {
+      "role": "evidence"
+    },
+    "DuctGauge": {
+      "role": "evidence"
+    },
+    "ElementKey": {
+      "role": "evidence"
+    },
+    "EquipmentTag": {
+      "role": "evidence"
+    },
+    "EquipmentType": {
+      "role": "evidence"
+    },
+    "ExcavationBasis": {
+      "role": "evidence"
+    },
+    "ExcavationVolume": {
+      "role": "evidence"
+    },
+    "ExtraQty": {
+      "role": "pipeline-produced",
+      "checkAfter": "PROJECT_RULES"
+    },
+    "FabricArea": {
+      "role": "evidence"
+    },
+    "FaceScope": {
+      "role": "pipeline-produced",
+      "checkAfter": "QUANTIFY"
+    },
+    "FastenerType": {
+      "role": "evidence"
+    },
+    "FillMaterial": {
+      "role": "evidence"
+    },
+    "FillVolume": {
+      "role": "evidence"
+    },
+    "FinishType": {
+      "role": "evidence"
+    },
+    "FireRating": {
+      "role": "evidence"
+    },
+    "FittingType": {
+      "role": "evidence"
+    },
+    "FormworkType": {
+      "role": "evidence"
+    },
+    "HardwareSet": {
+      "role": "evidence"
+    },
+    "Height": {
+      "role": "evidence"
+    },
+    "HoleQty": {
+      "role": "evidence"
+    },
+    "HookDetail": {
+      "role": "evidence"
+    },
+    "HostKey": {
+      "role": "evidence"
+    },
+    "InsulationThickness": {
+      "role": "evidence"
+    },
+    "JointType": {
+      "role": "evidence"
+    },
+    "LapDetail": {
+      "role": "evidence"
+    },
+    "Length": {
+      "role": "evidence"
+    },
+    "LengthBasis": {
+      "role": "pipeline-produced",
+      "checkAfter": "QUANTIFY"
+    },
+    "LevelZone": {
+      "role": "evidence"
+    },
+    "LiftingScope": {
+      "role": "evidence"
+    },
+    "LinkedModel": {
+      "role": "evidence"
+    },
+    "MaterialCode": {
+      "role": "evidence"
+    },
+    "MeshType": {
+      "role": "evidence"
+    },
+    "ModelFile": {
+      "role": "pipeline-produced",
+      "checkAfter": "ACQUIRE"
+    },
+    "ModelRevision": {
+      "role": "pipeline-produced",
+      "checkAfter": "NORMALIZE"
+    },
+    "NetWeight": {
+      "role": "evidence"
+    },
+    "NominalSize": {
+      "role": "evidence"
+    },
+    "OccupiedVolume": {
+      "role": "evidence"
+    },
+    "OpeningQty": {
+      "role": "evidence"
+    },
+    "OuterDiameter": {
+      "role": "evidence"
+    },
+    "OuterSurfaceArea": {
+      "role": "evidence"
+    },
+    "ParallelRuns": {
+      "role": "evidence"
+    },
+    "PenetrationType": {
+      "role": "evidence"
+    },
+    "PhaseStatus": {
+      "role": "pipeline-produced",
+      "checkAfter": "NORMALIZE"
+    },
+    "PileType": {
+      "role": "evidence"
+    },
+    "PipeClass": {
+      "role": "evidence"
+    },
+    "PlateArea": {
+      "role": "evidence"
+    },
+    "PortSizes": {
+      "role": "evidence"
+    },
+    "PrecastType": {
+      "role": "evidence"
+    },
+    "PressureClass": {
+      "role": "evidence"
+    },
+    "QuantityBasis": {
+      "role": "pipeline-produced",
+      "checkAfter": "QUANTIFY"
+    },
+    "RebarGrade": {
+      "role": "evidence"
+    },
+    "RoomZone": {
+      "role": "evidence"
+    },
+    "RuleID": {
+      "role": "pipeline-produced",
+      "checkAfter": "QUANTIFY"
+    },
+    "SectionSize": {
+      "role": "evidence"
+    },
+    "SheetSize": {
+      "role": "evidence"
+    },
+    "SlopeDetail": {
+      "role": "evidence"
+    },
+    "SoilClass": {
+      "role": "evidence"
+    },
+    "SourceUnit": {
+      "role": "pipeline-produced",
+      "checkAfter": "QUANTIFY"
+    },
+    "SteelGrade": {
+      "role": "evidence"
+    },
+    "SupportType": {
+      "role": "evidence"
+    },
+    "SystemCode": {
+      "role": "evidence"
+    },
+    "TestScope": {
+      "role": "evidence"
+    },
+    "Thickness": {
+      "role": "evidence"
+    },
+    "TypeCode": {
+      "role": "evidence"
+    },
+    "UnitFactor": {
+      "role": "pipeline-produced",
+      "checkAfter": "QUANTIFY"
+    },
+    "UnitMass": {
+      "role": "evidence"
+    },
+    "UnitMassArea": {
+      "role": "evidence"
+    },
+    "Volume": {
+      "role": "evidence"
+    },
+    "VolumeBasis": {
+      "role": "pipeline-produced",
+      "checkAfter": "QUANTIFY"
+    },
+    "Weight": {
+      "role": "evidence"
+    },
+    "WeightBasis": {
+      "role": "pipeline-produced",
+      "checkAfter": "QUANTIFY"
+    },
+    "Width": {
+      "role": "evidence"
+    },
+    "WorkPackage": {
+      "role": "evidence"
+    },
+    "WorkingSpace": {
+      "role": "evidence"
+    }
+  }
+}

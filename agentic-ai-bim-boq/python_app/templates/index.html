@@ -1,0 +1,1648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NavisMCP Explorer</title>
+  <style>
+    :root {
+      --bg: #f6f7f9; --panel: #ffffff; --border: #e2e5ea; --text: #1f2430;
+      --muted: #6b7280; --accent: #2563eb; --accent-soft: #eff4ff; --geo: #16a34a;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; font-family: -apple-system, "Segoe UI", Roboto, "Noto Sans Thai", sans-serif;
+      background: var(--bg); color: var(--text); font-size: 14px;
+    }
+    header { padding: 14px 18px; background: var(--panel); border-bottom: 1px solid var(--border); }
+    header h1 { margin: 0 0 6px; font-size: 18px; }
+    .stats { color: var(--muted); font-size: 13px; }
+    .stats b { color: var(--text); }
+
+    .toolbar {
+      display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+      padding: 10px 18px; background: var(--panel); border-bottom: 1px solid var(--border);
+    }
+    .toolbar input[type=search], .toolbar select, .toolbar button {
+      padding: 7px 10px; border: 1px solid var(--border); border-radius: 7px;
+      background: #fff; color: var(--text); font-size: 13px;
+    }
+    .toolbar input[type=search] { flex: 1; min-width: 220px; }
+    .toolbar button { cursor: pointer; }
+    .toolbar button.active, .seg button.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .seg { display: inline-flex; border: 1px solid var(--border); border-radius: 7px; overflow: hidden; }
+    .seg button { border: none; border-radius: 0; }
+    .grow { flex: 1; }
+
+    #interp {
+      padding: 8px 18px; background: var(--accent-soft); border-bottom: 1px solid var(--border);
+      font-size: 13px; display: none;
+    }
+    .tag {
+      display: inline-block; background: #fff; border: 1px solid var(--border);
+      border-radius: 20px; padding: 2px 10px; margin: 2px 4px 2px 0; font-size: 12px;
+    }
+    .tag b { color: var(--accent); }
+
+    .tablewrap { padding: 8px 18px 20px; }
+    table { width: 100%; border-collapse: collapse; background: var(--panel); border-radius: 8px; overflow: hidden; }
+    th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); }
+    th { background: #fafbfc; font-weight: 600; font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .03em; }
+    tbody tr { cursor: pointer; }
+    tbody tr:hover { background: var(--accent-soft); }
+    td { max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .badge { display: inline-block; padding: 1px 8px; border-radius: 20px; background: var(--border); color: var(--muted); font-size: 12px; }
+    .badge.geo { background: #dcfce7; color: var(--geo); }
+    .code { display: inline-block; padding: 1px 8px; border-radius: 6px; background: var(--accent-soft); color: var(--accent); font-weight: 600; font-size: 12px; }
+    .code.none { background: var(--border); color: var(--muted); }
+
+    /* Grouped-by-UNIFORMAT view */
+    .groups { padding: 8px 18px 24px; }
+    .group {
+      background: var(--panel); border: 1px solid var(--border); border-radius: 8px;
+      padding: 10px 14px; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; cursor: pointer;
+    }
+    .group:hover { border-color: var(--accent); }
+    .group .count { margin-left: auto; color: var(--muted); }
+    .bar { height: 6px; background: var(--accent); border-radius: 4px; }
+
+    .pager { display: flex; gap: 8px; align-items: center; padding: 6px 18px 20px; }
+    .pager button { padding: 6px 12px; border: 1px solid var(--border); background: #fff; border-radius: 7px; cursor: pointer; }
+    .pager button:disabled { opacity: .5; cursor: default; }
+
+    /* Detail drawer — wider + user-resizable (R3) */
+    #drawer {
+      position: fixed; top: 0; right: 0; width: 640px; max-width: 96vw; min-width: 360px; height: 100%;
+      background: var(--panel); border-left: 1px solid var(--border); box-shadow: -4px 0 20px rgba(0,0,0,.08);
+      transform: translateX(100%); transition: transform .2s; overflow-y: auto; z-index: 20;
+    }
+    #drawer.open { transform: translateX(0); }
+    /* Drag handle on the left edge to resize width. */
+    #drawerResize {
+      position: absolute; top: 0; left: 0; width: 6px; height: 100%;
+      cursor: ew-resize; z-index: 21; background: transparent;
+    }
+    #drawerResize:hover, #drawer.resizing #drawerResize { background: var(--accent); opacity: .35; }
+    #drawer.resizing { transition: none; user-select: none; }
+    #drawer .dhead { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: start; }
+    #drawer h2 { margin: 0; font-size: 15px; }
+    #drawer .close { border: none; background: none; font-size: 22px; cursor: pointer; color: var(--muted); }
+    #drawer .dbody { padding: 12px 18px; }
+    #drawer h3 { margin: 16px 0 6px; font-size: 13px; text-transform: uppercase; letter-spacing: .03em; color: var(--muted); }
+    .prop { display: grid; grid-template-columns: 32% 68%; gap: 10px; padding: 6px 0; border-bottom: 1px dashed var(--border); font-size: 13px; }
+    .prop .k { color: var(--muted); word-break: break-word; }
+    .prop .v { word-break: break-word; white-space: pre-wrap; }
+    .empty { padding: 40px; text-align: center; color: var(--muted); }
+
+    /* Model selector + Models manager (multi-model) */
+    #modelSelect { max-width: 260px; }
+    #modelsOverlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.35); z-index: 30;
+      display: none; align-items: flex-start; justify-content: center;
+    }
+    #modelsOverlay.open { display: flex; }
+    #modelsPanel {
+      background: var(--panel); margin-top: 8vh; width: 640px; max-width: 94vw;
+      max-height: 80vh; overflow-y: auto; border-radius: 10px; border: 1px solid var(--border);
+      box-shadow: 0 12px 40px rgba(0,0,0,.18);
+    }
+    #modelsPanel .mp-head { display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 18px; border-bottom: 1px solid var(--border); }
+    #modelsPanel .mp-head h2 { margin: 0; font-size: 16px; }
+    #modelsPanel .close { border: none; background: none; font-size: 22px; cursor: pointer; color: var(--muted); }
+    .mp-actions { padding: 12px 18px; display: flex; gap: 10px; align-items: center; border-bottom: 1px solid var(--border); }
+    .mp-note { color: var(--muted); font-size: 12px; }
+    .mp-progress { padding: 10px 18px; border-bottom: 1px solid var(--border); }
+    .mp-progress-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 5px; }
+    .mp-bar-track { height: 10px; background: var(--border); border-radius: 6px; overflow: hidden; }
+    .mp-bar-fill { height: 100%; width: 0%; background: var(--accent); border-radius: 6px; transition: width .3s; }
+    .mp-body { padding: 8px 18px 16px; }
+    .mrow { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px dashed var(--border); }
+    .mrow .mname { font-weight: 600; }
+    .mrow .msub { color: var(--muted); font-size: 12px; }
+    .mrow .mgrow { flex: 1; }
+    .mrow button { padding: 5px 10px; border: 1px solid var(--border); border-radius: 7px; background: #fff; cursor: pointer; font-size: 12px; }
+    .mrow button.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .mrow button.danger { color: #b91c1c; border-color: #f0c9c9; }
+    .mrow button:disabled { opacity: .5; cursor: default; }
+    .pill { display: inline-block; padding: 1px 8px; border-radius: 20px; font-size: 11px; }
+    .pill.ok { background: #dcfce7; color: var(--geo); }
+    .pill.no { background: var(--border); color: var(--muted); }
+
+    /* Agentic AI panel */
+    #agentOverlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.35); z-index: 40;
+      display: none; align-items: flex-start; justify-content: center;
+    }
+    #agentOverlay.open { display: flex; }
+    #agentPanel {
+      background: var(--panel); margin-top: 5vh; width: 820px; max-width: 96vw;
+      height: 86vh; display: flex; flex-direction: column; border-radius: 10px;
+      border: 1px solid var(--border); box-shadow: 0 12px 40px rgba(0,0,0,.18);
+    }
+    .agent-head { display: flex; gap: 12px; align-items: center; padding: 14px 18px; border-bottom: 1px solid var(--border); }
+    .agent-head h2 { margin: 0; font-size: 16px; }
+    .agent-head .close { margin-left: auto; border: none; background: none; font-size: 22px; cursor: pointer; color: var(--muted); }
+    #agentStatus { color: var(--muted); font-size: 12px; }
+    #agentMessages { flex: 1; overflow-y: auto; padding: 16px 18px; }
+    .agent-msg { margin-bottom: 14px; line-height: 1.55; white-space: pre-wrap; }
+    .agent-msg.user { background: var(--accent-soft); padding: 10px 12px; border-radius: 8px; }
+    .agent-msg.answer { font-size: 14px; }
+    .agent-trace { margin: 8px 0 16px; border-left: 3px solid var(--accent); padding-left: 12px; }
+    .agent-trace summary { cursor: pointer; color: var(--accent); font-weight: 600; }
+    .trace-row { margin-top: 8px; padding: 8px 10px; background: #fafbfc; border: 1px solid var(--border); border-radius: 7px; }
+    .trace-row code { display: block; margin-top: 4px; color: var(--muted); white-space: pre-wrap; word-break: break-word; }
+    .agent-compose { display: flex; gap: 8px; padding: 12px 18px; border-top: 1px solid var(--border); }
+    #agentInput { flex: 1; min-height: 68px; resize: vertical; padding: 9px 11px; border: 1px solid var(--border); border-radius: 7px; font: inherit; }
+    #agentSend { align-self: flex-end; padding: 9px 16px; border: none; border-radius: 7px; background: var(--accent); color: #fff; cursor: pointer; }
+    #agentSend:disabled { opacity: .55; cursor: default; }
+
+    /* End-to-end BOQ workflow */
+    #workflowOverlay { position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 45;
+      display: none; align-items: flex-start; justify-content: center; }
+    #workflowOverlay.open { display: flex; }
+    #workflowPanel { background: var(--panel); margin-top: 3vh; width: 1120px; max-width: 97vw;
+      height: 92vh; display: flex; flex-direction: column; border-radius: 10px;
+      border: 1px solid var(--border); box-shadow: 0 12px 40px rgba(0,0,0,.2); }
+    .wf-head { display:flex; gap:12px; align-items:center; padding:14px 18px; border-bottom:1px solid var(--border); }
+    .wf-head h2 { margin:0; font-size:17px; }
+    .wf-head .close { margin-left:auto; border:0; background:none; font-size:22px; cursor:pointer; }
+    .wf-controls { display:flex; gap:14px; align-items:end; flex-wrap:wrap; padding:12px 18px; background:#fafbfc; border-bottom:1px solid var(--border); }
+    .wf-field { display:flex; flex-direction:column; gap:5px; font-size:12px; }
+    .wf-field select { min-width:230px; padding:7px; border:1px solid var(--border); border-radius:6px; }
+    .wf-checks { display:flex; gap:10px; padding:7px 0; }
+    #workflowRun { padding:8px 15px; border:0; border-radius:7px; background:var(--accent); color:#fff; cursor:pointer; }
+    #workflowRun:disabled { opacity:.55; cursor:default; }
+    #workflowBody { flex:1; overflow:auto; padding:16px 18px; }
+    .wf-note { padding:9px 11px; background:#fff7ed; color:#9a3412; border-radius:7px; margin-bottom:12px; }
+    .wf-stages { display:flex; gap:7px; flex-wrap:wrap; margin:10px 0 14px; }
+    .wf-stage { padding:5px 9px; border-radius:16px; background:#dcfce7; color:#166534; font-size:12px; }
+    .wf-summary { display:grid; grid-template-columns:repeat(4,minmax(120px,1fr)); gap:10px; margin-bottom:14px; }
+    .wf-stat { border:1px solid var(--border); border-radius:8px; padding:10px; }
+    .wf-stat b { display:block; font-size:20px; margin-top:3px; }
+    .wf-actions { display:flex; gap:8px; margin:10px 0; }
+    .wf-actions a { padding:7px 11px; border:1px solid var(--border); border-radius:6px; color:var(--accent); text-decoration:none; }
+    .wf-table { overflow:auto; border:1px solid var(--border); border-radius:7px; margin-top:10px; }
+    .wf-table table { min-width:980px; }
+    .wf-issues { margin:10px 0; }
+    .wf-issue { padding:7px 9px; border-left:3px solid #f59e0b; background:#fffbeb; margin:5px 0; }
+    .wf-live-label { display:flex; align-items:center; gap:8px; margin:12px 0 8px; font-weight:600; }
+    .wf-live-label small { color:var(--muted); font-weight:400; }
+    .wf-flow { display:grid; grid-template-columns:repeat(6,minmax(125px,1fr)); gap:18px; margin:8px 0 10px; }
+    .wf-flow-node { position:relative; min-height:104px; padding:10px; text-align:left; font:inherit;
+      color:var(--text); background:var(--panel); border:1px solid var(--border); border-radius:9px; cursor:pointer; }
+    .wf-flow-node:not(:last-child)::after { content:"→"; position:absolute; right:-15px; top:38px;
+      color:var(--muted); font-size:18px; pointer-events:none; }
+    .wf-flow-node .wf-node-no { display:block; color:var(--muted); font-size:11px; margin-bottom:4px; }
+    .wf-flow-node b { display:block; margin-bottom:5px; }
+    .wf-flow-node small { display:block; color:var(--muted); line-height:1.35; }
+    .wf-flow-node.active { border:2px solid var(--accent); background:var(--accent-soft); }
+    .wf-flow-node.done { border-color:#86b99a; background:#f1faf4; }
+    .wf-flow-node.selected { box-shadow:0 0 0 2px rgba(37,99,235,.18); }
+    .wf-flow-detail { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; padding:11px;
+      border:1px solid var(--border); border-radius:8px; background:#fafbfc; margin-bottom:12px; }
+    .wf-flow-detail b { display:block; font-size:12px; margin-bottom:4px; }
+    .wf-flow-detail code { display:block; white-space:pre-wrap; word-break:break-word; color:var(--muted); }
+    .wf-decision-log { width:100%; margin:8px 0 14px; }
+    .wf-decision-log td:first-child { white-space:nowrap; font-weight:600; }
+    .wf-decision-log td { vertical-align:top; }
+    .wf-stage.running { background:var(--accent-soft); color:var(--accent); }
+    .wf-stage.waiting { background:#f1f3f5; color:var(--muted); }
+    @media (prefers-reduced-motion:no-preference) {
+      .wf-flow-node.active { animation:wfPulse 1.1s ease-in-out infinite alternate; }
+      @keyframes wfPulse { from { box-shadow:0 0 0 0 rgba(37,99,235,.1); } to { box-shadow:0 0 0 5px rgba(37,99,235,.12); } }
+    }
+    @media (max-width:900px) {
+      .wf-flow { grid-template-columns:repeat(2,1fr); }
+      .wf-flow-node::after { display:none; }
+      .wf-flow-detail { grid-template-columns:repeat(2,1fr); }
+    }
+    @media (max-width:700px) {
+      .wf-summary { grid-template-columns:repeat(2,1fr); }
+      .wf-flow { grid-template-columns:1fr; }
+      .wf-flow-detail { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>NavisMCP Explorer</h1>
+    <div class="stats" id="stats">Loading…</div>
+  </header>
+
+  <div class="toolbar">
+    <select id="modelSelect" title="เลือกโมเดลที่จะแสดง"></select>
+    <button id="modelsBtn" title="จัดการโมเดล: ตรวจสอบไฟล์ใหม่ / โหลด / ลบ">🗂 Models</button>
+    <div class="seg" id="modeSeg">
+      <button data-mode="keyword" class="active">🔤 Keyword</button>
+      <button data-mode="semantic">🧠 Semantic</button>
+    </div>
+    <input type="search" id="search" placeholder="Search name, class, or property…" />
+    <select id="classFilter"><option value="">All classes</option></select>
+    <select id="uniformatFilter"><option value="">All UNIFORMAT</option></select>
+    <select id="pageSize">
+      <option>50</option><option>100</option><option>200</option>
+    </select>
+    <button id="groupBtn" title="Group elements by UNIFORMAT II">▦ Group by UNIFORMAT</button>
+    <button id="classGroupBtn" title="Group elements by class (Revit category)">▤ Group by Class</button>
+    <button id="boqBtn" title="Bill of Quantities grouped by Cost Code (UNIFORMAT II)">📋 BOQ</button>
+    <button id="boqDetailBtn" title="Detailed BOQ broken down by type and material (priceable line items)">📑 BOQ (Detailed)</button>
+    <button id="agentBtn" onclick="openAgent()" title="ให้ Agentic AI เลือกและเรียก MCP tools">🤖 MCP Agent</button>
+    <button id="boqWorkflowBtn" onclick="openBoqWorkflow()" title="สร้าง BOQ ตั้งแต่ตรวจ BIM จนคำนวณราคาสาธิต">⚙ BOQ End to End</button>
+    <button id="exportBtn" title="Export BOQ table to CSV" style="display:none">⬇ Export CSV</button>
+    <span class="grow"></span>
+    <button id="langBtn" title="สลับภาษาป้ายกำกับ property (ไทย/English)">🌐 ไทย</button>
+    <button id="refreshBtn" title="Re-export the model from Navisworks and reload the data">🔄 Refresh Model</button>
+  </div>
+
+  <div id="interp"></div>
+
+  <div class="tablewrap" id="flatView">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th><th>Display Name</th><th>Class</th><th>UNIFORMAT</th><th>Props</th><th>Geometry</th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+
+  <div class="pager" id="pager">
+    <button id="prevBtn">‹ Prev</button>
+    <span id="pageInfo"></span>
+    <button id="nextBtn">Next ›</button>
+  </div>
+
+  <div class="groups" id="groupView" style="display:none"></div>
+
+  <!-- Models manager overlay -->
+  <div id="modelsOverlay">
+    <div id="modelsPanel">
+      <div class="mp-head">
+        <h2>จัดการโมเดล (Models)</h2>
+        <button class="close" id="modelsClose">×</button>
+      </div>
+      <div class="mp-actions">
+        <button id="scanBtn" title="ตรวจสอบไฟล์ใหม่ในโฟลเดอร์ data">🔍 ตรวจสอบไฟล์ใหม่ (Scan)</button>
+        <span id="cacheMode" class="mp-note"></span>
+      </div>
+      <div id="loadProgress" class="mp-progress" style="display:none">
+        <div class="mp-progress-label"><span id="lpText">กำลังโหลด…</span> <span id="lpPct">0%</span></div>
+        <div class="mp-bar-track"><div class="mp-bar-fill" id="lpFill"></div></div>
+      </div>
+      <div class="mp-body" id="modelsList"></div>
+    </div>
+  </div>
+
+  <div id="agentOverlay">
+    <div id="agentPanel">
+      <div class="agent-head">
+        <h2>NavisMCP Agent</h2>
+        <span id="agentStatus">กำลังตรวจสอบ…</span>
+        <button class="close" id="agentClose">×</button>
+      </div>
+      <div id="agentMessages">
+        <div class="agent-msg answer">ถามข้อมูลโมเดลเป็นภาษาธรรมชาติได้ เช่น “โมเดลนี้มี BOQ อะไรบ้าง” Agent จะเลือก MCP tool เอง และแสดงลำดับการทำงานให้ตรวจสอบได้</div>
+      </div>
+      <div class="agent-compose">
+        <textarea id="agentInput" maxlength="4000" placeholder="พิมพ์คำถามเกี่ยวกับโมเดล…"></textarea>
+        <button id="agentSend">ส่งคำถาม</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="workflowOverlay">
+    <div id="workflowPanel">
+      <div class="wf-head">
+        <h2>End to End BIM to BOQ</h2>
+        <span id="workflowStatus" class="mp-note">พร้อมเริ่ม</span>
+        <button class="close" id="workflowClose">×</button>
+      </div>
+      <div class="wf-controls">
+        <label class="wf-field">โมเดล BIM
+          <select id="workflowModel"></select>
+        </label>
+        <div class="wf-field">ขอบเขตงาน
+          <div class="wf-checks">
+            <label><input type="checkbox" name="wfDiscipline" value="Structure" checked> Structure</label>
+            <label><input type="checkbox" name="wfDiscipline" value="Architecture" checked> Architecture</label>
+            <label><input type="checkbox" name="wfDiscipline" value="MEP" checked> MEP</label>
+          </div>
+        </div>
+        <button id="workflowRun">เริ่มสร้าง BOQ</button>
+      </div>
+      <div id="workflowBody">
+        <div class="wf-note">ระบบใช้ UNIFORMAT II และราคา THB สำหรับสาธิตเท่านั้น ผลลัพธ์ต้องได้รับการตรวจสอบก่อนนำไปใช้งานจริง</div>
+        <p>Pipeline: Acquire → Validate → Normalize → Classify → Quantify → Price → Verify → Generate</p>
+        <p class="mp-note">เลือกโมเดลและ discipline แล้วกดเริ่ม ระบบจะแสดงกฎ ปริมาณ ราคา ปัญหา และหลักฐานที่ตรวจสอบย้อนกลับได้</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="drawer">
+    <div id="drawerResize" title="Drag to resize"></div>
+    <div class="dhead">
+      <h2 id="dtitle">Element</h2>
+      <button class="close" id="dclose">×</button>
+    </div>
+    <div class="dbody" id="dbody"></div>
+  </div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const state = {
+      page: 1, limit: 50, q: "", className: "", uniformat: "",
+      type: null, material: null, model: null,
+      mode: "keyword", view: "flat", total: 0, selected: null,
+    };
+
+    // Append the selected model to any /api query string.
+    const withModel = (path) => {
+      if (!state.model) return path;
+      return path + (path.includes("?") ? "&" : "?") + "model=" + encodeURIComponent(state.model);
+    };
+    let searchTimer = null;
+    let uniformatGroups = [];
+    let lastBoq = null;
+    let lastBoqDetail = null;
+
+    const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => (
+      { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]
+    ));
+
+    // ---- R4: property value/label translation (presentation only) ----
+    // UI language for property labels: "th" (default) or "en".
+    let lang = localStorage.getItem("navis.lang") || "th";
+
+    // Map raw property keys -> readable labels. First entry is Thai, second English.
+    const PROP_LABELS = {
+      "Element.Area": ["พื้นที่ (Area)", "Area"],
+      "Wall.Area": ["พื้นที่ผนัง (Wall Area)", "Wall Area"],
+      "Element Properties.Area": ["พื้นที่ (Area)", "Area"],
+      "Element.Volume": ["ปริมาตร (Volume)", "Volume"],
+      "Wall.Volume": ["ปริมาตรผนัง (Wall Volume)", "Wall Volume"],
+      "Element Properties.Volume": ["ปริมาตร (Volume)", "Volume"],
+      "Element.Length": ["ความยาว (Length)", "Length"],
+      "Wall.Length": ["ความยาวผนัง (Wall Length)", "Wall Length"],
+      "GeometryCurve.Length": ["ความยาวเส้น (Curve Length)", "Curve Length"],
+      "Level.Name": ["ชั้น (Level)", "Level"],
+      "Category.Name": ["หมวดหมู่ (Category)", "Category"],
+      "Element.Structural Material": ["วัสดุโครงสร้าง (Material)", "Structural Material"],
+      "Material.Name": ["วัสดุ (Material)", "Material"],
+      "Element.Material": ["วัสดุ (Material)", "Material"],
+      "Item.Material": ["วัสดุ (Material)", "Material"],
+      "Element.Base Constraint": ["ระดับอ้างอิงล่าง (Base Level)", "Base Level"],
+      "Constraints.Base Constraint": ["ระดับอ้างอิงล่าง (Base Level)", "Base Level"],
+      "Element.Reference Level": ["ระดับอ้างอิง (Reference Level)", "Reference Level"],
+      "Element.Comments": ["หมายเหตุ (Comments)", "Comments"],
+      "Element.Type": ["ประเภท (Type)", "Type"],
+      "Element.Family": ["แฟมิลี (Family)", "Family"],
+      "Element.Family and Type": ["แฟมิลีและประเภท", "Family and Type"],
+    };
+
+    // A readable label for a property key. Falls back to the name after the
+    // first "." (drop the category prefix) when no translation exists.
+    function propLabel(key) {
+      const m = PROP_LABELS[key];
+      if (m) return lang === "en" ? m[1] : m[0];
+      const dot = key.indexOf(".");
+      return dot >= 0 ? key.slice(dot + 1) : key;
+    }
+
+    const _num = (n) => Number(n).toLocaleString(undefined, { maximumFractionDigits: 3 });
+
+    // Turn a raw typed value into something readable. Returns the display string;
+    // callers keep the raw value as a tooltip for traceability.
+    function formatPropertyValue(key, raw) {
+      const s = String(raw ?? "").trim();
+      if (s === "") return "—";
+      // typed numeric strings from the exporter
+      let m = s.match(/^DoubleArea:(-?[\d.eE+]+)$/);
+      if (m) return `${_num(m[1])} m²`;
+      m = s.match(/^DoubleVolume:(-?[\d.eE+]+)$/);
+      if (m) return `${_num(m[1])} m³`;
+      m = s.match(/^DoubleLength:(-?[\d.eE+]+)$/);
+      if (m) return `${_num(m[1])} m`;
+      m = s.match(/^Double:(-?[\d.eE+]+)$/);
+      if (m) return _num(m[1]);
+      // booleans
+      if (s === "True") return lang === "en" ? "Yes" : "ใช่";
+      if (s === "False") return lang === "en" ? "No" : "ไม่ใช่";
+      // material: Material "NAME", #id  -> NAME
+      if (s.includes('"')) {
+        const parts = s.split('"');
+        if (parts.length >= 3 && parts[1].trim()) return parts[1].trim();
+      }
+      const hash = s.indexOf(", #");
+      if (hash >= 0) return s.slice(0, hash).trim();
+      return s;
+    }
+
+    // Render one property row with a readable label + value and raw tooltips.
+    function propRow(key, raw) {
+      const label = propLabel(key);
+      const val = formatPropertyValue(key, raw);
+      return `<div class="prop">` +
+        `<span class="k" title="${esc(key)}">${esc(label)}</span>` +
+        `<span class="v" title="${esc(raw)}">${esc(val)}</span></div>`;
+    }
+
+    async function api(path) {
+      const r = await fetch(path);
+      if (!r.ok) throw new Error(`${r.status} ${await r.text()}`);
+      return r.json();
+    }
+
+    // ---- Agentic AI: LLM chooses MCP tools and returns an inspectable trace ----
+    async function openAgent() {
+      $("agentOverlay").classList.add("open");
+      try {
+        const s = await api("/api/agent/status");
+        $("agentStatus").textContent = s.enabled
+          ? `พร้อมใช้ · ${s.model}`
+          : "ยังไม่ได้ตั้งค่า OPENROUTER_API_KEY";
+      } catch (e) {
+        $("agentStatus").textContent = "ตรวจสอบสถานะไม่สำเร็จ";
+      }
+      $("agentInput").focus();
+    }
+
+    function renderAgentTrace(trace) {
+      const rows = (trace || []).map((x) => {
+        const io = x.input ? `\ninput: ${JSON.stringify(x.input)}` :
+          (x.output ? `\noutput: ${JSON.stringify(x.output)}` : "");
+        const tool = x.tool ? ` · ${x.tool}` : "";
+        return `<div class="trace-row"><b>${esc(x.phase || "step")}${esc(tool)}</b>` +
+          `<div>${esc(x.message || "")}</div>` +
+          (io ? `<code>${esc(io.trim())}</code>` : "") + `</div>`;
+      }).join("");
+      return `<details class="agent-trace" open><summary>ลำดับที่ Agent คิดและเรียก tool</summary>${rows}</details>`;
+    }
+
+    async function sendAgentQuestion() {
+      const message = $("agentInput").value.trim();
+      if (!message) return;
+      const box = $("agentMessages");
+      box.insertAdjacentHTML("beforeend", `<div class="agent-msg user">${esc(message)}</div>`);
+      $("agentInput").value = "";
+      $("agentSend").disabled = true;
+      $("agentSend").textContent = "กำลังทำงาน…";
+      const waiting = document.createElement("div");
+      waiting.className = "agent-msg answer";
+      waiting.textContent = "Agent กำลังตรวจสอบ tools และข้อมูลจาก MCP…";
+      box.appendChild(waiting);
+      box.scrollTop = box.scrollHeight;
+      try {
+        const r = await fetch("/api/agent/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message, model: state.model, max_steps: 8 }),
+        });
+        const data = await r.json().catch(() => ({}));
+        if (!r.ok) throw new Error(data.detail || `${r.status}`);
+        waiting.remove();
+        box.insertAdjacentHTML("beforeend", renderAgentTrace(data.trace));
+        box.insertAdjacentHTML("beforeend", `<div class="agent-msg answer"><b>คำตอบ</b>\n${esc(data.answer)}</div>`);
+      } catch (e) {
+        waiting.textContent = "Agent ทำงานไม่สำเร็จ: " + e.message;
+      } finally {
+        $("agentSend").disabled = false;
+        $("agentSend").textContent = "ส่งคำถาม";
+        box.scrollTop = box.scrollHeight;
+      }
+    }
+
+    // ---- End-to-end BIM to BOQ workflow ---------------------------------
+    const WORKFLOW_STAGE_NAMES = ["ACQUIRE", "VALIDATE", "NORMALIZE", "CLASSIFY", "QUANTIFY", "PRICE", "VERIFY", "GENERATE"];
+    let workflowProgressTimer = null;
+    let workflowFlowState = [];
+
+    function selectedWorkflowRequest() {
+      return {
+        model: $("workflowModel").value || state.model || "ยังไม่ได้เลือก",
+        disciplines: Array.from(document.querySelectorAll('input[name="wfDiscipline"]:checked')).map((x) => x.value),
+      };
+    }
+
+    function wfText(value) {
+      if (Array.isArray(value)) return value.join(", ") || "ไม่มี";
+      if (value && typeof value === "object") return JSON.stringify(value, null, 2);
+      return String(value ?? "—");
+    }
+
+    function workflowFlowItems(result, request) {
+      const stages = Object.fromEntries((result?.stages || []).map((s) => [s.stage, s]));
+      const firstLine = result?.boq?.lines?.[0];
+      const versions = result?.versions || {};
+      const summary = result?.summary || {};
+      return [
+        {
+          title: "คำขอผู้ใช้", actor: "ผู้ใช้",
+          short: `${request.model} · ${request.disciplines.join(", ") || "ยังไม่เลือกขอบเขต"}`,
+          why: "ผู้ใช้เลือกโมเดลและขอบเขตงานที่ต้องการสร้าง BOQ",
+          input: { model: request.model, disciplines: request.disciplines },
+          output: "Create BOQ intent",
+        },
+        {
+          title: "เลือกเส้นทางและ Tool", actor: "UI Router หรือ MCP Agent",
+          short: "run_boq_workflow",
+          why: "การกดปุ่มนี้เรียก POST /api/workflows/boq โดยตรง หากถามผ่าน MCP Agent ตัว LLM จะเลือก tool run_boq_workflow เพราะผู้ใช้ต้องการผลครบกระบวนการ",
+          input: "Create BOQ intent",
+          output: { route: "POST /api/workflows/boq", tool: "run_boq_workflow" },
+        },
+        {
+          title: "อ่านข้อมูล BIM", actor: "Headless JSON และ MCP",
+          short: result ? `${fmtNumber(stages.ACQUIRE?.outputCount, 0)} elements` : "Headless JSON → MCP",
+          why: "Workflow อ่าน snapshot ที่ export ผ่าน MCP ไว้แล้ว จึงไม่ต้องเปิด Navisworks ระหว่างคำนวณ",
+          input: request.model,
+          output: result ? { elements: stages.ACQUIRE?.outputCount, source: "Headless JSON snapshot" } : "BIM elements and properties",
+        },
+        {
+          title: "เลือกหมวดและกฎ", actor: "Deterministic Rule Engine",
+          short: result ? `${versions.mapping} · ${versions.measurement}` : "UNIFORMAT + measurement rules",
+          why: "ใช้ mapping rule เลือก discipline และ Cost Code แล้วใช้ measurement rule เลือก COUNT LENGTH AREA หรือ VOLUME โดย LLM ไม่คำนวณตัวเลข",
+          input: result ? { normalizedElements: stages.NORMALIZE?.outputCount, mappingVersion: versions.mapping, measurementVersion: versions.measurement } : "Normalized BIM properties",
+          output: result ? { classified: stages.CLASSIFY?.outputCount, quantified: stages.QUANTIFY?.outputCount, exampleRule: firstLine?.ruleId } : "Classified and quantified elements",
+        },
+        {
+          title: "คำนวณราคา", actor: "Deterministic Cost Engine",
+          short: result ? `${versions.pricebook} · ${fmtNumber(stages.PRICE?.outputCount, 0)} lines` : "Quantity × Unit Rate",
+          why: "จับคู่ rate จาก pricebook เวอร์ชันที่เลือก แล้วคูณด้วยปริมาณที่ rule engine คำนวณ",
+          input: result ? { boqLines: stages.PRICE?.inputCount, pricebook: versions.pricebook, examplePriceSource: firstLine?.priceSource } : "Quantity lines and demo pricebook",
+          output: result ? { pricedLines: stages.PRICE?.outputCount, demoTotalTHB: summary.totalCost } : "Priced BOQ lines",
+        },
+        {
+          title: "ตรวจและสร้าง BOQ", actor: "Verification และ Generator",
+          short: result ? `${fmtNumber(summary.lineCount, 0)} lines · ${fmtNumber(result.issues?.length, 0)} issue groups` : "Verify → BOQ CSV JSON",
+          why: "ตรวจปริมาณติดลบ ราคาหาย รหัส และผลรวม จากนั้นสร้าง BOQ quality report exception report และ audit trail",
+          input: result ? { pricedLines: stages.VERIFY?.inputCount, issueGroups: result.issues?.length || 0 } : "Priced lines",
+          output: result ? { jobId: result.jobId, status: result.status, lineCount: summary.lineCount, exports: ["CSV", "JSON"] } : "BOQ result and audit trail",
+        },
+      ];
+    }
+
+    function flowDetailMarkup(item) {
+      return `<div><b>ใครเป็นผู้ทำ</b>${esc(item.actor)}</div>
+        <div><b>เลือกเพราะอะไร</b>${esc(item.why)}</div>
+        <div><b>ข้อมูลเข้า</b><code>${esc(wfText(item.input))}</code></div>
+        <div><b>ข้อมูลออก</b><code>${esc(wfText(item.output))}</code></div>`;
+    }
+
+    function workflowDecisionRows(result, request) {
+      const versions = result?.versions || {};
+      const stages = Object.fromEntries((result?.stages || []).map((s) => [s.stage, s]));
+      const firstLine = result?.boq?.lines?.[0];
+      const rows = [
+        ["Route", "UI Router", "POST /api/workflows/boq", "ผู้ใช้กดปุ่ม End to End โดยตรง"],
+        ["Agent option", "LLM เมื่อถามผ่าน MCP Agent", "run_boq_workflow", "คำขอต้องการ BOQ ครบทุกขั้น"],
+        ["Data", "Workflow service", "Headless JSON snapshot", `${request.model}${result ? ` · ${fmtNumber(stages.ACQUIRE?.outputCount, 0)} elements` : ""}`],
+        ["Classification", "Mapping rules", versions.mapping || "mapping rules", "เลือก discipline และ UNIFORMAT Cost Code"],
+        ["Measurement", "Measurement rules", versions.measurement || "COUNT LENGTH AREA VOLUME", firstLine ? `ตัวอย่าง ${firstLine.ruleId} อ่าน ${firstLine.quantitySources?.join(", ") || "—"}` : "เลือกตามชนิด element และ property ที่มี"],
+        ["Pricing", "Cost engine", versions.pricebook || "demo pricebook", firstLine ? `ตัวอย่าง rate source ${firstLine.priceSource || "—"}` : "Quantity × Unit Rate"],
+      ];
+      return rows.map((r) => `<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td><code>${esc(r[2])}</code></td><td>${esc(r[3])}</td></tr>`).join("");
+    }
+
+    function workflowFlowMarkup(result, request, activeFlow = -1, selectedFlow = 0, live = false) {
+      workflowFlowState = workflowFlowItems(result, request);
+      const nodes = workflowFlowState.map((item, index) => {
+        const status = result ? "done" : index === activeFlow ? "active" : (activeFlow > index ? "done" : "");
+        return `<button type="button" class="wf-flow-node ${status} ${index === selectedFlow ? "selected" : ""}" data-wf-flow="${index}">
+          <span class="wf-node-no">${index + 1} · ${esc(item.actor)}</span><b>${esc(item.title)}</b><small>${esc(item.short)}</small></button>`;
+      }).join("");
+      return `<div class="wf-live-label">Data Flow ${live ? `<small>Progress visualization ระหว่างรอผลจริง</small>` : `<small>กดแต่ละขั้นเพื่อดูเหตุผลและข้อมูลเข้าออก</small>`}</div>
+        <div class="wf-flow" aria-label="เส้นทางข้อมูล BIM ไป BOQ">${nodes}</div>
+        <div id="workflowFlowDetail" class="wf-flow-detail" aria-live="polite">${flowDetailMarkup(workflowFlowState[selectedFlow])}</div>
+        <details ${result ? "open" : ""}><summary><b>Decision Log ว่าอะไรเลือกใช้อะไร</b></summary>
+          <table class="wf-decision-log"><thead><tr><th>จุดตัดสินใจ</th><th>ผู้เลือก</th><th>สิ่งที่เลือก</th><th>เหตุผล</th></tr></thead>
+          <tbody>${workflowDecisionRows(result, request)}</tbody></table></details>`;
+    }
+
+    function workflowStageMarkup(result, activeStage = -1) {
+      if (result) return (result.stages || []).map((s) =>
+        `<span class="wf-stage" title="${esc(s.message || "")}">${esc(s.stage)} · ${fmtNumber(s.inputCount, 0)} → ${fmtNumber(s.outputCount, 0)}</span>`
+      ).join("");
+      return WORKFLOW_STAGE_NAMES.map((name, index) =>
+        `<span class="wf-stage ${index === activeStage ? "running" : (index < activeStage ? "" : "waiting")}">${name}${index === activeStage ? " · กำลังทำ" : ""}</span>`
+      ).join("");
+    }
+
+    function renderWorkflowPreview() {
+      const request = selectedWorkflowRequest();
+      $("workflowBody").innerHTML = `
+        <div class="wf-note">ระบบใช้ UNIFORMAT II และราคา THB สำหรับสาธิตเท่านั้น ผลลัพธ์ต้องได้รับการตรวจสอบก่อนนำไปใช้งานจริง</div>
+        ${workflowFlowMarkup(null, request)}
+        <div class="wf-stages">${workflowStageMarkup(null)}</div>`;
+    }
+
+    function openBoqWorkflow() {
+      const target = $("workflowModel");
+      target.innerHTML = Array.from($("modelSelect").options)
+        .filter((o) => o.value)
+        .map((o) => `<option value="${esc(o.value)}">${esc(o.textContent)}</option>`)
+        .join("");
+      if (state.model) target.value = state.model;
+      $("workflowOverlay").classList.add("open");
+      renderWorkflowPreview();
+    }
+
+    function fmtNumber(value, digits = 2) {
+      if (value === null || value === undefined) return "—";
+      return Number(value).toLocaleString("th-TH", { maximumFractionDigits: digits });
+    }
+
+    function renderWorkflow(result) {
+      const total = result.summary || {};
+      const request = result.request || selectedWorkflowRequest();
+      const stages = workflowStageMarkup(result);
+      const issues = (result.issues || []).map((x) =>
+        `<div class="wf-issue"><b>${esc(x.code)}</b> · ${fmtNumber(x.count, 0)} รายการ<br>` +
+        `${esc(x.message || "")}</div>`
+      ).join("") || `<div class="pill ok">ไม่พบปัญหา</div>`;
+      const rows = (result.boq?.lines || []).slice(0, 200).map((x) => `
+        <tr>
+          <td>${esc(x.discipline)}</td><td>${esc(x.costCode)}</td><td>${esc(x.title)}</td>
+          <td>${esc(x.type)}</td><td>${esc(x.material)}</td>
+          <td>${esc(x.measurementRule)}<br><small>${esc(x.ruleId)}</small><br>
+            <small>Quantity: ${esc((x.quantitySources || []).join(", ") || "—")}</small><br>
+            <small>Mapping: ${esc((x.mappingSources || []).join(", ") || "—")}</small><br>
+            <small>Price: ${esc(x.priceSource || "—")}</small></td>
+          <td class="num">${fmtNumber(x.quantity, 3)}</td><td>${esc(x.unit)}</td>
+          <td class="num">${fmtNumber(x.unitRate)}</td><td class="num">${fmtNumber(x.totalCost)}</td>
+          <td class="num">${fmtNumber(x.elementCount, 0)}</td>
+        </tr>`).join("");
+      const job = encodeURIComponent(result.jobId);
+      $("workflowBody").innerHTML = `
+        <div class="wf-note">${esc(result.boq?.disclaimer || "")}</div>
+        <div><b>Job ID:</b> <code>${esc(result.jobId)}</code> · <b>Status:</b> ${esc(result.status)}</div>
+        ${workflowFlowMarkup(result, request)}
+        <div class="wf-stages">${stages}</div>
+        <div class="wf-summary">
+          <div class="wf-stat">BOQ lines<b>${fmtNumber(total.lineCount, 0)}</b></div>
+          <div class="wf-stat">Elements ที่คำนวณได้<b>${fmtNumber(total.elementCount, 0)}</b></div>
+          <div class="wf-stat">รายการไม่มีราคา<b>${fmtNumber(total.unpricedLineCount, 0)}</b></div>
+          <div class="wf-stat">ยอดสาธิต THB<b>${fmtNumber(total.totalCost)}</b></div>
+        </div>
+        <details class="wf-issues" open><summary><b>Quality and exception report (${fmtNumber((result.issues || []).length, 0)} กลุ่ม)</b></summary>${issues}</details>
+        <div class="wf-actions">
+          <a href="/api/workflows/boq/${job}/export/csv">ดาวน์โหลด CSV</a>
+          <a href="/api/workflows/boq/${job}/export/json">ดาวน์โหลด JSON พร้อม Audit</a>
+        </div>
+        <div class="wf-table"><table><thead><tr>
+          <th>Discipline</th><th>Cost Code</th><th>หมวดงาน</th><th>Type</th><th>Material</th>
+          <th>กฎ</th><th>ปริมาณ</th><th>หน่วย</th><th>ราคาต่อหน่วย</th><th>รวม</th><th>Elements</th>
+        </tr></thead><tbody>${rows}</tbody></table></div>
+        ${(result.boq?.lines || []).length > 200 ? `<p class="mp-note">หน้าเว็บแสดง 200 รายการแรก ดาวน์โหลด CSV เพื่อดูทั้งหมด</p>` : ""}
+        <details><summary><b>Audit trail</b></summary>${(result.auditTrail || []).map((x) =>
+          `<div class="trace-row"><b>${esc(x.stage)}</b> · ${fmtNumber(x.inputCount, 0)} → ${fmtNumber(x.outputCount, 0)}<br>${esc(x.message || "")}</div>`
+        ).join("")}</details>`;
+    }
+
+    function renderWorkflowProgress(request, stageIndex) {
+      const stageToFlow = [2, 2, 2, 3, 3, 4, 5, 5];
+      const activeFlow = stageIndex < 0 ? 1 : stageToFlow[Math.min(stageIndex, stageToFlow.length - 1)];
+      $("workflowBody").innerHTML = `
+        <div class="wf-note">กำลังรอผลจาก backend แถบที่เคลื่อนเป็นภาพสาธิตลำดับงาน เมื่อเสร็จระบบจะแทนด้วยจำนวนและหลักฐานจริง</div>
+        ${workflowFlowMarkup(null, request, activeFlow, activeFlow, true)}
+        <div class="wf-stages">${workflowStageMarkup(null, stageIndex)}</div>`;
+    }
+
+    async function runBoqWorkflow() {
+      const model = $("workflowModel").value;
+      const disciplines = Array.from(document.querySelectorAll('input[name="wfDiscipline"]:checked')).map((x) => x.value);
+      if (!model || !disciplines.length) {
+        $("workflowStatus").textContent = "กรุณาเลือกโมเดลและอย่างน้อยหนึ่ง discipline";
+        return;
+      }
+      $("workflowRun").disabled = true;
+      $("workflowStatus").textContent = "กำลังประมวลผล BIM และสร้าง BOQ…";
+      const request = { model, disciplines };
+      let stageIndex = -1;
+      renderWorkflowProgress(request, stageIndex);
+      clearInterval(workflowProgressTimer);
+      workflowProgressTimer = setInterval(() => {
+        stageIndex = Math.min(stageIndex + 1, WORKFLOW_STAGE_NAMES.length - 1);
+        renderWorkflowProgress(request, stageIndex);
+      }, 650);
+      try {
+        const response = await fetch("/api/workflows/boq", {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ model, disciplines }),
+        });
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(result.detail || `${response.status}`);
+        clearInterval(workflowProgressTimer);
+        $("workflowStatus").textContent = "เสร็จแล้ว";
+        renderWorkflow(result);
+      } catch (e) {
+        clearInterval(workflowProgressTimer);
+        $("workflowStatus").textContent = "ทำงานไม่สำเร็จ";
+        $("workflowBody").innerHTML = `<div class="wf-note" role="alert">${esc(e.message)}</div>${workflowFlowMarkup(null, request, -1, 1)}`;
+      } finally {
+        workflowProgressTimer = null;
+        $("workflowRun").disabled = false;
+      }
+    }
+
+    async function loadStats() {
+      try {
+        const s = await api(withModel("/api/stats"));
+        state.model = s.model || state.model;
+        $("stats").innerHTML =
+          `Model <b>${esc(s.model) || "—"}</b>` +
+          ` · Elements <b>${(s.totalElements ?? 0).toLocaleString()}</b>` +
+          ` · Classes <b>${(s.distinctClasses ?? 0).toLocaleString()}</b>` +
+          ` · UNIFORMAT <b>${(s.distinctUniformats ?? 0).toLocaleString()}</b>` +
+          ` · Properties <b>${(s.totalProperties ?? 0).toLocaleString()}</b>`;
+      } catch (e) {
+        $("stats").textContent = "No data yet — run ingest first.";
+      }
+    }
+
+    async function loadClasses() {
+      try {
+        const { classes } = await api(withModel("/api/classes?limit=1000"));
+        const sel = $("classFilter");
+        for (const c of classes) {
+          const o = document.createElement("option");
+          o.value = c.name; o.textContent = `${c.name} (${c.count})`;
+          sel.appendChild(o);
+        }
+      } catch (e) { /* no data */ }
+    }
+
+    // UNIFORMAT groups, kept for both the filter dropdown and the grouped view.
+    async function loadUniformat() {
+      try {
+        const { uniformat } = await api(withModel("/api/uniformat?limit=1000"));
+        uniformatGroups = uniformat || [];
+        const sel = $("uniformatFilter");
+        for (const u of uniformatGroups) {
+          if (!u.code) continue;
+          const o = document.createElement("option");
+          o.value = u.code || "";
+          o.textContent = `${u.code} ${u.title || ""} (${u.count})`;
+          sel.appendChild(o);
+        }
+      } catch (e) { /* no data */ }
+    }
+
+    function buildQuery() {
+      const p = new URLSearchParams();
+      if (state.q) p.set("q", state.q);
+      if (state.className) p.set("className", state.className);
+      if (state.uniformat) p.set("uniformat", state.uniformat);
+      // BOQ line-item drill-down (exact type/material). Empty string is a valid
+      // filter value (e.g. "no material"), so send when not null.
+      if (state.type !== null) p.set("type", state.type);
+      if (state.material !== null) p.set("material", state.material);
+      if (state.model) p.set("model", state.model);
+      p.set("page", state.page);
+      p.set("limit", state.limit);
+      return p.toString();
+    }
+
+    // Drill from a BOQ / BOQ-detailed row into the matching elements (flat view).
+    function drillTo({ uniformat = "", type = null, material = null }) {
+      state.view = "flat";
+      state.mode = "keyword";
+      state.q = "";
+      state.className = "";
+      state.uniformat = uniformat;
+      state.type = type;
+      state.material = material;
+      state.page = 1;
+      $("search").value = "";
+      $("classFilter").value = "";
+      $("uniformatFilter").value = uniformat || "";
+      $("boqBtn").classList.remove("active");
+      $("boqDetailBtn").classList.remove("active");
+      $("groupBtn").classList.remove("active");
+      $("classGroupBtn").classList.remove("active");
+      $("interp").style.display = "none";
+      $("exportBtn").style.display = "none";
+      resetTableHead();
+      setActiveMode();
+      loadFlat().catch((e) => {
+        $("rows").innerHTML = `<tr><td colspan="6" class="empty">${esc(e.message)}</td></tr>`;
+      });
+    }
+
+    function uniformatCell(el) {
+      const code = el.uniformatCode || "";
+      const title = el.uniformatTitle || "";
+      if (!code) return '<span class="code none">—</span>';
+      return `<span class="code" title="${esc(title)}">${esc(code)}</span>`;
+    }
+
+    function renderRows(elements, startIndex) {
+      const tb = $("rows");
+      tb.innerHTML = "";
+      if (!elements.length) {
+        tb.innerHTML = '<tr><td colspan="6" class="empty">No elements match.</td></tr>';
+        return;
+      }
+      elements.forEach((el, i) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML =
+          `<td>${startIndex + i + 1}</td>` +
+          `<td title="${esc(el.displayName)}">${esc(el.displayName) || "—"}</td>` +
+          `<td title="${esc(el.className)}">${esc(el.className) || "—"}</td>` +
+          `<td>${uniformatCell(el)}</td>` +
+          `<td>${el.propCount}</td>` +
+          `<td>${el.hasGeometry ? '<span class="badge geo">geometry</span>' : '<span class="badge">—</span>'}</td>`;
+        tr.onclick = () => openDetail(el.rowid);
+        tb.appendChild(tr);
+      });
+    }
+
+    async function loadFlat() {
+      $("flatView").style.display = "";
+      $("groupView").style.display = "none";
+      $("pager").style.display = "flex";
+      $("exportBtn").style.display = "none";
+
+      if (state.mode === "semantic") {
+        $("interp").style.display = "block";
+        const p = new URLSearchParams({ q: state.q, page: state.page, limit: state.limit });
+        if (state.model) p.set("model", state.model);
+        const data = await api("/api/semantic?" + p.toString());
+        renderInterp(data);
+        state.total = data.total;
+        renderRows(data.elements, (state.page - 1) * state.limit);
+      } else {
+        $("interp").style.display = "none";
+        const data = await api("/api/elements?" + buildQuery());
+        state.total = data.total;
+        renderRows(data.elements, (state.page - 1) * state.limit);
+      }
+      updatePager();
+    }
+
+    function renderInterp(data) {
+      const f = data.interpretation || {};
+      const tags = [];
+      if (f.category) tags.push(`<span class="tag"><b>type</b> ${esc(f.category)}</span>`);
+      if (f.level) tags.push(`<span class="tag"><b>level</b> ${esc(f.level)}</span>`);
+      if (f.keywords && f.keywords.length)
+        tags.push(`<span class="tag"><b>keywords</b> ${esc(f.keywords.join(", "))}</span>`);
+      tags.push(`<span class="tag"><b>parser</b> ${esc(data.parser)}</span>`);
+      $("interp").innerHTML = `Understood as: ${tags.join(" ")} · <b>${data.total}</b> result(s)`;
+    }
+
+    function updatePager() {
+      const pages = Math.max(1, Math.ceil(state.total / state.limit));
+      $("pageInfo").textContent = `Page ${state.page} / ${pages} · ${state.total.toLocaleString()} total`;
+      $("prevBtn").disabled = state.page <= 1;
+      $("nextBtn").disabled = state.page >= pages;
+    }
+
+    // ---- Grouped-by-UNIFORMAT view ----
+    async function loadGroups() {
+      $("interp").style.display = "none";
+      $("flatView").style.display = "none";
+      $("pager").style.display = "none";
+      $("exportBtn").style.display = "none";
+      $("groupView").style.display = "block";
+
+      if (!uniformatGroups.length) {
+        const { uniformat } = await api(withModel("/api/uniformat?limit=1000"));
+        uniformatGroups = uniformat || [];
+      }
+      const box = $("groupView");
+      box.innerHTML = "";
+      const groups = uniformatGroups.slice();
+      const max = Math.max(1, ...groups.map((g) => g.count));
+      for (const g of groups) {
+        const div = document.createElement("div");
+        div.className = "group";
+        const pct = Math.round((g.count / max) * 100);
+        div.innerHTML =
+          `<span class="code">${esc(g.code) || "—"}</span>` +
+          `<span>${esc(g.title) || "Unclassified"}</span>` +
+          `<div class="bar" style="width:${pct}px"></div>` +
+          `<span class="count">${g.count.toLocaleString()}</span>`;
+        div.onclick = () => {
+          state.view = "flat"; state.mode = "keyword"; state.uniformat = g.code;
+          state.page = 1;
+          $("uniformatFilter").value = g.code;
+          setActiveMode();
+          loadFlat();
+        };
+        box.appendChild(div);
+      }
+    }
+
+    // ---- Grouped-by-Class view ----
+    async function loadClassGroups() {
+      $("interp").style.display = "none";
+      $("flatView").style.display = "none";
+      $("pager").style.display = "none";
+      $("exportBtn").style.display = "none";
+      $("groupView").style.display = "block";
+
+      const box = $("groupView");
+      box.innerHTML = "";
+      let classes = [];
+      try {
+        const data = await api("/api/classes?limit=1000");
+        classes = data.classes || [];
+      } catch (e) {
+        box.innerHTML = `<div class="empty">${esc(e.message)}</div>`;
+        return;
+      }
+      if (!classes.length) {
+        box.innerHTML = '<div class="empty">No classes to group.</div>';
+        return;
+      }
+      const max = Math.max(1, ...classes.map((c) => c.count));
+      for (const c of classes) {
+        const div = document.createElement("div");
+        div.className = "group";
+        const pct = Math.round((c.count / max) * 100);
+        div.innerHTML =
+          `<span>${esc(c.name) || "—"}</span>` +
+          `<div class="bar" style="width:${pct}px"></div>` +
+          `<span class="count">${c.count.toLocaleString()}</span>`;
+        div.onclick = () => {
+          state.view = "flat"; state.mode = "keyword";
+          state.className = c.name; state.uniformat = "";
+          state.page = 1;
+          $("classFilter").value = c.name;
+          $("uniformatFilter").value = "";
+          $("groupBtn").classList.remove("active");
+          $("classGroupBtn").classList.remove("active");
+          resetTableHead();
+          setActiveMode();
+          loadFlat();
+        };
+        box.appendChild(div);
+      }
+    }
+
+    // ---- BOQ view ----
+    async function loadBoq() {
+      $("interp").style.display = "none";
+      $("flatView").style.display = "";
+      $("groupView").style.display = "none";
+      $("pager").style.display = "none";
+      $("exportBtn").style.display = "";
+
+      const data = await api(withModel("/api/boq?order=code"));
+      lastBoq = data;
+      lastBoqDetail = null;
+      const u = data.units || {};
+      const tb = $("rows");
+      document.querySelector("thead tr").innerHTML =
+        `<th>Cost Code</th><th>Title</th><th>Count</th>` +
+        `<th>Area (${esc(u.area || "m²")})</th><th>Volume (${esc(u.volume || "m³")})</th><th>Length (${esc(u.length || "m")})</th>`;
+      tb.innerHTML = "";
+      for (const it of data.items) {
+        const tr = document.createElement("tr");
+        tr.title = "คลิกเพื่อดู element ในรหัสนี้";
+        tr.innerHTML =
+          `<td><span class="code">${esc(it.code) || "—"}</span></td>` +
+          `<td>${esc(it.title)}</td>` +
+          `<td>${it.count.toLocaleString()}</td>` +
+          `<td>${it.area.toLocaleString()}</td>` +
+          `<td>${it.volume.toLocaleString()}</td>` +
+          `<td>${it.length.toLocaleString()}</td>`;
+        tr.onclick = () => drillTo({ uniformat: it.code || "" });
+        tb.appendChild(tr);
+      }
+      const t = data.totals || {};
+      const tr = document.createElement("tr");
+      tr.style.fontWeight = "700";
+      tr.innerHTML =
+        `<td>TOTAL</td><td></td><td>${(t.count || 0).toLocaleString()}</td>` +
+        `<td>${(t.area || 0).toLocaleString()}</td>` +
+        `<td>${(t.volume || 0).toLocaleString()}</td>` +
+        `<td>${(t.length || 0).toLocaleString()}</td>`;
+      tb.appendChild(tr);
+    }
+
+    // ---- Detailed BOQ view (grouped by code -> type/material line items) ----
+    async function loadBoqDetailed() {
+      $("interp").style.display = "none";
+      $("flatView").style.display = "";
+      $("groupView").style.display = "none";
+      $("pager").style.display = "none";
+      $("exportBtn").style.display = "";
+
+      const data = await api(withModel("/api/boq/detailed?order=code"));
+      lastBoqDetail = data;
+      lastBoq = null;
+      const u = data.units || {};
+      document.querySelector("thead tr").innerHTML =
+        `<th>Cost Code</th><th>Type</th><th>Material</th><th>Count</th>` +
+        `<th>Area (${esc(u.area || "m²")})</th><th>Volume (${esc(u.volume || "m³")})</th><th>Length (${esc(u.length || "m")})</th>`;
+      const tb = $("rows");
+      tb.innerHTML = "";
+
+      // Group line items by code so each cost code gets a subtotal header.
+      const byCode = new Map();
+      for (const it of data.items) {
+        if (!byCode.has(it.code)) byCode.set(it.code, []);
+        byCode.get(it.code).push(it);
+      }
+
+      for (const [code, list] of byCode) {
+        const title = list[0].title || (code ? "" : "Unclassified");
+        const sub = list.reduce((a, it) => ({
+          count: a.count + it.count, area: a.area + it.area,
+          volume: a.volume + it.volume, length: a.length + it.length,
+        }), { count: 0, area: 0, volume: 0, length: 0 });
+
+        const head = document.createElement("tr");
+        head.style.background = "var(--accent-soft)";
+        head.style.fontWeight = "700";
+        head.innerHTML =
+          `<td><span class="code">${esc(code) || "—"}</span> ${esc(title)}</td>` +
+          `<td colspan="2"></td>` +
+          `<td>${sub.count.toLocaleString()}</td>` +
+          `<td>${round3(sub.area).toLocaleString()}</td>` +
+          `<td>${round3(sub.volume).toLocaleString()}</td>` +
+          `<td>${round3(sub.length).toLocaleString()}</td>`;
+        tb.appendChild(head);
+
+        for (const it of list) {
+          const tr = document.createElement("tr");
+          tr.title = "คลิกเพื่อดู element ของรายการนี้";
+          tr.innerHTML =
+            `<td></td>` +
+            `<td title="${esc(it.type)}">${esc(it.type) || "—"}</td>` +
+            `<td title="${esc(it.material)}">${esc(it.material) || "—"}</td>` +
+            `<td>${it.count.toLocaleString()}</td>` +
+            `<td>${it.area.toLocaleString()}</td>` +
+            `<td>${it.volume.toLocaleString()}</td>` +
+            `<td>${it.length.toLocaleString()}</td>`;
+          tr.onclick = () => drillTo({
+            uniformat: it.code || "", type: it.type || "", material: it.material || "",
+          });
+          tb.appendChild(tr);
+        }
+      }
+
+      const t = data.totals || {};
+      const tr = document.createElement("tr");
+      tr.style.fontWeight = "700";
+      tr.style.borderTop = "2px solid var(--accent)";
+      tr.innerHTML =
+        `<td>TOTAL</td><td></td><td></td><td>${(t.count || 0).toLocaleString()}</td>` +
+        `<td>${(t.area || 0).toLocaleString()}</td>` +
+        `<td>${(t.volume || 0).toLocaleString()}</td>` +
+        `<td>${(t.length || 0).toLocaleString()}</td>`;
+      tb.appendChild(tr);
+    }
+
+    const round3 = (n) => Math.round((n + Number.EPSILON) * 1000) / 1000;
+
+    function exportCsv() {
+      let rows, name;
+      if (lastBoqDetail) {
+        rows = [["Cost Code", "Title", "Type", "Material", "Count", "Area", "Volume", "Length"]];
+        for (const it of lastBoqDetail.items)
+          rows.push([it.code, it.title, it.type, it.material, it.count, it.area, it.volume, it.length]);
+        const t = lastBoqDetail.totals || {};
+        rows.push(["TOTAL", "", "", "", t.count, t.area, t.volume, t.length]);
+        name = "boq_detailed.csv";
+      } else if (lastBoq) {
+        rows = [["Cost Code", "Title", "Count", "Area", "Volume", "Length"]];
+        for (const it of lastBoq.items)
+          rows.push([it.code, it.title, it.count, it.area, it.volume, it.length]);
+        const t = lastBoq.totals || {};
+        rows.push(["TOTAL", "", t.count, t.area, t.volume, t.length]);
+        name = "boq.csv";
+      } else {
+        return;
+      }
+      const csv = rows.map((r) =>
+        r.map((c) => `"${String(c ?? "").replace(/"/g, '""')}"`).join(",")
+      ).join("\n");
+      const blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = name;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    function resetTableHead() {
+      document.querySelector("thead tr").innerHTML =
+        `<th>#</th><th>Display Name</th><th>Class</th><th>UNIFORMAT</th><th>Props</th><th>Geometry</th>`;
+    }
+
+    async function doRefresh() {
+      const btn = $("refreshBtn");
+      if (btn.disabled) return;
+      const original = btn.textContent;
+      if (!confirm("Re-export the model from Navisworks and reload all data?\nThis can take a few minutes.")) return;
+
+      btn.disabled = true;
+      btn.textContent = "⏳ Refreshing…";
+      $("stats").textContent = "Refreshing model — re-exporting via Navisworks and re-ingesting…";
+      try {
+        const url = state.model
+          ? "/api/refresh?model=" + encodeURIComponent(state.model)
+          : "/api/refresh";
+        const r = await fetch(url, { method: "POST" });
+        const data = await r.json().catch(() => ({}));
+        if (!r.ok) {
+          throw new Error(data.detail || `${r.status}`);
+        }
+        // Reload everything to reflect the refreshed model.
+        await loadModels();
+        $("classFilter").innerHTML = '<option value="">All classes</option>';
+        $("uniformatFilter").innerHTML = '<option value="">All UNIFORMAT</option>';
+        uniformatGroups = [];
+        await loadStats();
+        await Promise.all([loadClasses(), loadUniformat()]);
+        state.page = 1;
+        refresh();
+        alert(
+          `Refreshed "${data.model || "model"}".\n` +
+          `Ingested ${(data.ingestedElements ?? 0).toLocaleString()} elements.`
+        );
+      } catch (e) {
+        alert("Refresh failed: " + e.message);
+        loadStats();
+      } finally {
+        btn.disabled = false;
+        btn.textContent = original;
+      }
+    }
+
+    let lastDetail = null;   // cached element detail for re-render on language switch
+
+    function plainRow(label, value) {
+      return `<div class="prop"><span class="k">${esc(label)}</span>` +
+        `<span class="v">${esc(value)}</span></div>`;
+    }
+
+    // Build the drawer HTML from an element detail object (R2 + R4).
+    function renderDetail(d) {
+      const th = lang !== "en";
+      const t = (thTxt, enTxt) => (th ? thTxt : enTxt);
+
+      let html = "";
+
+      // Identity
+      html += `<h3>${t("ข้อมูลทั่วไป", "Overview")}</h3>`;
+      html += plainRow(t("ประเภท (Class)", "Class"), d.className || "—");
+      html += plainRow("UNIFORMAT", `${d.uniformatCode || "—"} ${d.uniformatTitle || ""}`.trim());
+      html += plainRow("Id", d.id || "(empty)");
+
+      html += plainRow(t("หน่วยพิกัด", "Coordinate units"), d.coordinateUnits || "—");
+      html += plainRow(t("ระบบพิกัด", "Coordinate frame"), d.coordinateFrame || "—");
+      html += plainRow(t("จุดอ้างอิงตำแหน่ง", "Position reference"), d.position ? "Bounding box center" : "—");
+      // Location & Geometry (R2)
+      html += `<h3>${t("ตำแหน่งและ Geometry", "Location & Geometry")}</h3>`;
+      html += plainRow(t("ชั้น (Level)", "Level"),
+        d.level ? formatPropertyValue("Level.Name", d.level) : "—");
+      html += plainRow(t("โครงสร้าง (Tree)", "Ancestor"), d.ancestorPath || "—");
+      html += plainRow(t("มี Geometry", "Has geometry"), d.hasGeometry ? t("ใช่", "yes") : t("ไม่ใช่", "no"));
+
+      const fmt3 = (n) => Number(n).toLocaleString(undefined, { maximumFractionDigits: 3 });
+      if (d.position) {
+        html += plainRow(t("ตำแหน่ง (X, Y, Z)", "Position (X, Y, Z)"),
+          `${fmt3(d.position.x)}, ${fmt3(d.position.y)}, ${fmt3(d.position.z)}`);
+      } else {
+        html += plainRow(t("ตำแหน่ง (X, Y, Z)", "Position (X, Y, Z)"), "—");
+      }
+      if (d.size) {
+        html += plainRow(t("ขนาด กว้าง×ลึก×สูง", "Size W×D×H"),
+          `${fmt3(d.size.width)} × ${fmt3(d.size.depth)} × ${fmt3(d.size.height)}`);
+      } else {
+        html += plainRow(t("ขนาด กว้าง×ลึก×สูง", "Size W×D×H"), "—");
+      }
+      if (d.boundingBox) {
+        const b = d.boundingBox;
+        html += plainRow(t("ขอบเขต ต่ำสุด (min)", "BBox min"),
+          `${fmt3(b.minX)}, ${fmt3(b.minY)}, ${fmt3(b.minZ)}`);
+        html += plainRow(t("ขอบเขต สูงสุด (max)", "BBox max"),
+          `${fmt3(b.maxX)}, ${fmt3(b.maxY)}, ${fmt3(b.maxZ)}`);
+      }
+
+      // Quantities (R2/R4)
+      const m = d.measures || {};
+      const u = d.units || {};
+      if (m.area != null || m.volume != null || m.length != null) {
+        html += `<h3>${t("ปริมาณ", "Quantities")}</h3>`;
+        if (m.area != null) html += plainRow(t("พื้นที่ (Area)", "Area"), `${fmt3(m.area)} ${u.area || "m²"}`);
+        if (m.volume != null) html += plainRow(t("ปริมาตร (Volume)", "Volume"), `${fmt3(m.volume)} ${u.volume || "m³"}`);
+        if (m.length != null) html += plainRow(t("ความยาว (Length)", "Length"), `${fmt3(m.length)} ${u.length || "m"}`);
+      }
+
+      // Full property list (R4 formatting + translated labels)
+      const props = d.properties || {};
+      const keys = Object.keys(props).sort();
+      html += `<h3>${t("คุณสมบัติทั้งหมด", "Properties")} (${keys.length})</h3>`;
+      for (const k of keys) html += propRow(k, props[k]);
+
+      return html;
+    }
+
+    async function openDetail(rowid) {
+      try {
+        const d = await api(`/api/elements/${rowid}`);
+        lastDetail = d;
+        $("dtitle").textContent = d.displayName || "(no name)";
+        $("dbody").innerHTML = renderDetail(d);
+        $("drawer").classList.add("open");
+      } catch (e) {
+        $("dbody").textContent = "Failed to load: " + e.message;
+      }
+    }
+
+    // ---- Multi-model: selector + manager (scan / load / delete) ----
+    let modelsData = { models: [], selected: null };
+
+    async function loadModels() {
+      try {
+        modelsData = await api("/api/models");
+      } catch (e) {
+        modelsData = { models: [], selected: null };
+      }
+      const ingested = modelsData.models.filter((m) => m.ingested);
+      const sel = $("modelSelect");
+      sel.innerHTML = "";
+      if (!ingested.length) {
+        const o = document.createElement("option");
+        o.value = ""; o.textContent = "— no model loaded —";
+        sel.appendChild(o);
+        state.model = null;
+        return;
+      }
+      for (const m of ingested) {
+        const o = document.createElement("option");
+        o.value = m.model;
+        o.textContent = `${m.model} (${(m.elements ?? 0).toLocaleString()})`;
+        sel.appendChild(o);
+      }
+      // Keep current selection if still present, else use server's default.
+      if (!state.model || !ingested.some((m) => m.model === state.model))
+        state.model = modelsData.selected || ingested[0].model;
+      sel.value = state.model;
+    }
+
+    // Switch the whole view to another model.
+    async function switchModel(model) {
+      state.model = model;
+      state.page = 1;
+      state.className = "";
+      state.uniformat = "";
+      state.q = "";
+      $("search").value = "";
+      $("classFilter").innerHTML = '<option value="">All classes</option>';
+      $("uniformatFilter").innerHTML = '<option value="">All UNIFORMAT</option>';
+      uniformatGroups = [];
+      await loadStats();
+      await Promise.all([loadClasses(), loadUniformat()]);
+      refresh();
+    }
+
+    function renderModelsList() {
+      const box = $("modelsList");
+      const models = modelsData.models || [];
+      if (!models.length) {
+        box.innerHTML = '<div class="empty">ไม่พบโมเดล วางไฟล์ .nwc/.nwd/.nwf ใน data แล้วกด Scan</div>';
+        return;
+      }
+      box.innerHTML = "";
+      for (const m of models) {
+        const row = document.createElement("div");
+        row.className = "mrow";
+        const ing = m.ingested
+          ? `<span class="pill ok">ingested ${(m.elements ?? 0).toLocaleString()}</span>`
+          : `<span class="pill no">not loaded</span>`;
+        const disk = m.onDisk ? `<span class="pill ok">on disk</span>` : `<span class="pill no">missing file</span>`;
+        row.innerHTML =
+          `<div><div class="mname">${esc(m.model)}</div>` +
+          `<div class="msub">${ing} ${disk}</div></div>` +
+          `<div class="mgrow"></div>`;
+        // View button (only when ingested)
+        if (m.ingested) {
+          const bView = document.createElement("button");
+          bView.className = "primary";
+          bView.textContent = "แสดง";
+          bView.onclick = () => {
+            $("modelsOverlay").classList.remove("open");
+            $("modelSelect").value = m.model;
+            switchModel(m.model);
+          };
+          row.appendChild(bView);
+        }
+        // Load / re-load button (only when the file is on disk)
+        if (m.onDisk) {
+          const bLoad = document.createElement("button");
+          bLoad.textContent = m.ingested ? "โหลดใหม่" : "โหลด";
+          bLoad.onclick = () => doLoad(m.model, bLoad);
+          row.appendChild(bLoad);
+        }
+        // Delete (only when ingested)
+        if (m.ingested) {
+          const bDel = document.createElement("button");
+          bDel.className = "danger";
+          bDel.textContent = "ลบ";
+          bDel.onclick = () => doDelete(m.model, bDel);
+          row.appendChild(bDel);
+        }
+        box.appendChild(row);
+      }
+    }
+
+    async function openModelsPanel() {
+      $("modelsOverlay").classList.add("open");
+      $("modelsList").innerHTML = '<div class="empty">กำลังโหลด…</div>';
+      await loadModels();
+      renderModelsList();
+    }
+
+    async function doScan(btn) {
+      const prev = btn.textContent;
+      btn.disabled = true; btn.textContent = "⏳ กำลังตรวจสอบ…";
+      const before = new Set((modelsData.models || []).map((m) => m.model));
+      try {
+        modelsData = await api("/api/models/scan");
+        renderModelsList();
+        await loadModels();          // refresh the toolbar dropdown too
+        renderModelsList();          // re-render with the merged list
+        const models = modelsData.models || [];
+        const found = models.filter((m) => !before.has(m.model)).map((m) => m.model);
+        const onDisk = models.filter((m) => m.onDisk).length;
+        const loadable = models.filter((m) => m.onDisk && !m.ingested).length;
+        let msg = `พบไฟล์ในโฟลเดอร์ data ${onDisk} ไฟล์`;
+        if (found.length) msg += ` · ใหม่: ${found.join(", ")}`;
+        if (loadable) msg += ` · ยังไม่โหลด ${loadable} ไฟล์ (กดปุ่ม โหลด)`;
+        if (!onDisk) msg = "ไม่พบไฟล์ .nwc/.nwd/.nwf ในโฟลเดอร์ data ของ server (release/data)";
+        $("cacheMode").textContent = msg;
+      } catch (e) {
+        $("cacheMode").textContent = "Scan failed: " + e.message;
+      } finally {
+        btn.disabled = false; btn.textContent = prev;
+      }
+    }
+
+    // Poll load progress and drive the progress bar until the job finishes.
+    function pollLoadProgress(model) {
+      return new Promise((resolve) => {
+        const bar = $("loadProgress");
+        bar.style.display = "block";
+        const tick = async () => {
+          let s;
+          try {
+            s = await api("/api/models/load/status?model=" + encodeURIComponent(model));
+          } catch (e) {
+            setTimeout(tick, 1000);
+            return;
+          }
+          const pct = s.percent ?? 0;
+          $("lpFill").style.width = pct + "%";
+          $("lpPct").textContent = pct + "%";
+          $("lpText").textContent = s.message || s.phase || "กำลังโหลด…";
+          if (s.done) {
+            resolve(s);
+            return;
+          }
+          setTimeout(tick, 700);
+        };
+        tick();
+      });
+    }
+
+    async function doLoad(model, btn) {
+      const prev = btn.textContent;
+      btn.disabled = true; btn.textContent = "⏳ กำลังโหลด…";
+      try {
+        const r = await fetch("/api/models/load?model=" + encodeURIComponent(model), { method: "POST" });
+        const data = await r.json().catch(() => ({}));
+        if (!r.ok) throw new Error(data.detail || `${r.status}`);
+
+        // Background job started — follow its progress on the bar.
+        const result = await pollLoadProgress(model);
+        $("loadProgress").style.display = "none";
+        if (result.error) throw new Error(result.error);
+
+        await loadModels();
+        renderModelsList();
+        alert(`โหลด "${model}" สำเร็จ (${(result.ingestedElements ?? 0).toLocaleString()} elements)`);
+        switchModel(model);
+      } catch (e) {
+        $("loadProgress").style.display = "none";
+        alert("Load failed: " + e.message);
+      } finally {
+        btn.disabled = false; btn.textContent = prev;
+      }
+    }
+
+    async function doDelete(model, btn) {
+      if (!confirm(`ลบข้อมูลโมเดล "${model}" ออกจากฐานข้อมูล?\n(ไฟล์ต้นฉบับไม่ถูกลบ)`)) return;
+      const prev = btn.textContent;
+      btn.disabled = true; btn.textContent = "⏳";
+      try {
+        const r = await fetch("/api/models?model=" + encodeURIComponent(model), { method: "DELETE" });
+        const data = await r.json().catch(() => ({}));
+        if (!r.ok) throw new Error(data.detail || `${r.status}`);
+        const wasCurrent = state.model === model;
+        await loadModels();
+        renderModelsList();
+        if (wasCurrent) {
+          if (state.model) await switchModel(state.model);
+          else { await loadStats(); refresh(); }
+        }
+      } catch (e) {
+        alert("Delete failed: " + e.message);
+        btn.disabled = false; btn.textContent = prev;
+      }
+    }
+
+    function setActiveMode() {
+      document.querySelectorAll("#modeSeg button").forEach((b) =>
+        b.classList.toggle("active", b.dataset.mode === state.mode));
+      // class + uniformat filters make sense only in keyword mode
+      const kw = state.mode === "keyword";
+      $("classFilter").style.display = kw ? "" : "none";
+      $("uniformatFilter").style.display = kw ? "" : "none";
+    }
+
+    function refresh() {
+      state.view = "flat";
+      // Normal browsing clears any BOQ line-item drill-down filters.
+      state.type = null;
+      state.material = null;
+      resetTableHead();
+      lastBoq = null;
+      lastBoqDetail = null;
+      $("groupBtn").classList.remove("active");
+      $("classGroupBtn").classList.remove("active");
+      $("boqBtn").classList.remove("active");
+      $("boqDetailBtn").classList.remove("active");
+      loadFlat().catch((e) => {
+        $("rows").innerHTML = `<tr><td colspan="6" class="empty">${esc(e.message)}</td></tr>`;
+      });
+    }
+
+    // ---- events ----
+    $("search").addEventListener("input", (e) => {
+      state.q = e.target.value.trim();
+      state.page = 1;
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(refresh, 250);
+    });
+    $("classFilter").addEventListener("change", (e) => {
+      state.className = e.target.value; state.page = 1; refresh();
+    });
+    $("uniformatFilter").addEventListener("change", (e) => {
+      state.uniformat = e.target.value; state.page = 1; refresh();
+    });
+    $("pageSize").addEventListener("change", (e) => {
+      state.limit = parseInt(e.target.value, 10); state.page = 1; refresh();
+    });
+    document.querySelectorAll("#modeSeg button").forEach((b) =>
+      b.addEventListener("click", () => {
+        state.mode = b.dataset.mode; state.page = 1; setActiveMode(); refresh();
+      }));
+    $("groupBtn").addEventListener("click", () => {
+      state.view = "group";
+      $("groupBtn").classList.add("active");
+      $("classGroupBtn").classList.remove("active");
+      $("boqBtn").classList.remove("active");
+      loadGroups();
+    });
+    $("classGroupBtn").addEventListener("click", () => {
+      state.view = "classGroup";
+      $("classGroupBtn").classList.add("active");
+      $("groupBtn").classList.remove("active");
+      $("boqBtn").classList.remove("active");
+      resetTableHead();
+      loadClassGroups();
+    });
+    $("boqBtn").addEventListener("click", () => {
+      state.view = "boq";
+      $("boqBtn").classList.add("active");
+      $("groupBtn").classList.remove("active");
+      $("classGroupBtn").classList.remove("active");
+      $("boqDetailBtn").classList.remove("active");
+      loadBoq();
+    });
+    $("boqDetailBtn").addEventListener("click", () => {
+      state.view = "boqDetail";
+      $("boqDetailBtn").classList.add("active");
+      $("boqBtn").classList.remove("active");
+      $("groupBtn").classList.remove("active");
+      $("classGroupBtn").classList.remove("active");
+      loadBoqDetailed();
+    });
+    $("modelSelect").addEventListener("change", (e) => {
+      if (e.target.value) switchModel(e.target.value);
+    });
+    $("modelsBtn").addEventListener("click", openModelsPanel);
+    $("agentBtn").addEventListener("click", openAgent);
+    $("agentClose").addEventListener("click", () => $("agentOverlay").classList.remove("open"));
+    $("agentOverlay").addEventListener("click", (e) => {
+      if (e.target.id === "agentOverlay") $("agentOverlay").classList.remove("open");
+    });
+    $("agentSend").addEventListener("click", sendAgentQuestion);
+    $("agentInput").addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendAgentQuestion(); }
+    });
+    $("boqWorkflowBtn").addEventListener("click", openBoqWorkflow);
+    $("workflowRun").addEventListener("click", runBoqWorkflow);
+    $("workflowModel").addEventListener("change", () => {
+      if (!$("workflowRun").disabled) renderWorkflowPreview();
+    });
+    document.querySelectorAll('input[name="wfDiscipline"]').forEach((input) =>
+      input.addEventListener("change", () => {
+        if (!$("workflowRun").disabled) renderWorkflowPreview();
+      }));
+    $("workflowBody").addEventListener("click", (e) => {
+      const node = e.target.closest("[data-wf-flow]");
+      if (!node) return;
+      const index = Number(node.dataset.wfFlow);
+      const item = workflowFlowState[index];
+      if (!item) return;
+      document.querySelectorAll(".wf-flow-node").forEach((x) => x.classList.remove("selected"));
+      node.classList.add("selected");
+      const detail = $("workflowFlowDetail");
+      if (detail) detail.innerHTML = flowDetailMarkup(item);
+    });
+    $("workflowClose").addEventListener("click", () => $("workflowOverlay").classList.remove("open"));
+    $("workflowOverlay").addEventListener("click", (e) => {
+      if (e.target.id === "workflowOverlay") $("workflowOverlay").classList.remove("open");
+    });
+    $("modelsClose").addEventListener("click", () => $("modelsOverlay").classList.remove("open"));
+    $("modelsOverlay").addEventListener("click", (e) => {
+      if (e.target.id === "modelsOverlay") $("modelsOverlay").classList.remove("open");
+    });
+    $("scanBtn").addEventListener("click", (e) => doScan(e.currentTarget));
+    $("exportBtn").addEventListener("click", exportCsv);
+    $("refreshBtn").addEventListener("click", doRefresh);
+    $("prevBtn").addEventListener("click", () => { if (state.page > 1) { state.page--; loadFlat(); } });
+    $("nextBtn").addEventListener("click", () => { state.page++; loadFlat(); });
+    $("dclose").addEventListener("click", () => $("drawer").classList.remove("open"));
+
+    // ---- R4: language toggle for property labels ----
+    function applyLang() {
+      $("langBtn").textContent = lang === "en" ? "🌐 EN" : "🌐 ไทย";
+      if (lastDetail && $("drawer").classList.contains("open"))
+        $("dbody").innerHTML = renderDetail(lastDetail);
+    }
+    $("langBtn").addEventListener("click", () => {
+      lang = lang === "en" ? "th" : "en";
+      localStorage.setItem("navis.lang", lang);
+      applyLang();
+    });
+
+    // ---- R3: resizable drawer (persisted width) ----
+    (function setupDrawerResize() {
+      const drawer = $("drawer");
+      const handle = $("drawerResize");
+      const saved = parseInt(localStorage.getItem("navis.drawerWidth") || "", 10);
+      if (saved && saved >= 360) drawer.style.width = Math.min(saved, window.innerWidth * 0.96) + "px";
+
+      let dragging = false;
+      const onMove = (e) => {
+        if (!dragging) return;
+        const x = e.touches ? e.touches[0].clientX : e.clientX;
+        // Drawer is docked right; width grows as the pointer moves left.
+        let w = window.innerWidth - x;
+        w = Math.max(360, Math.min(w, window.innerWidth * 0.96));
+        drawer.style.width = w + "px";
+      };
+      const stop = () => {
+        if (!dragging) return;
+        dragging = false;
+        drawer.classList.remove("resizing");
+        const w = parseInt(drawer.style.width, 10);
+        if (w) localStorage.setItem("navis.drawerWidth", String(w));
+        document.removeEventListener("mousemove", onMove);
+        document.removeEventListener("mouseup", stop);
+        document.removeEventListener("touchmove", onMove);
+        document.removeEventListener("touchend", stop);
+      };
+      const start = (e) => {
+        dragging = true;
+        drawer.classList.add("resizing");
+        document.addEventListener("mousemove", onMove);
+        document.addEventListener("mouseup", stop);
+        document.addEventListener("touchmove", onMove, { passive: false });
+        document.addEventListener("touchend", stop);
+        e.preventDefault();
+      };
+      handle.addEventListener("mousedown", start);
+      handle.addEventListener("touchstart", start, { passive: false });
+    })();
+
+    // ---- init ----
+    (async () => {
+      applyLang();
+      await loadModels();           // sets state.model + populates the selector
+      await loadStats();
+      await Promise.all([loadClasses(), loadUniformat()]);
+      setActiveMode();
+      refresh();
+    })();
+  </script>
+</body>
+</html>

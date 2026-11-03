@@ -1,0 +1,576 @@
+{
+  "version": "eit-cost-code-building-2012",
+  "sourceDocument": "รหัสต้นทุน และฐานข้อมูลราคา (Cost Code and Cost Database)",
+  "sourceAuthor": "เจตณรงค์ เชาว์ชูเดช, ธันวาคม 2561",
+  "sourceSection": "3.3 รหัสต้นทุน EIT Cost Code สำหรับงานอาคาร",
+  "sourceContext": "มาตรฐานรหัสต้นทุนก่อสร้างงานอาคาร พ.ศ.2555 (Standard Elemental Construction Cost Code for Building - 2012) จัดทำโดยวิศวกรรมสถานแห่งประเทศไทยในพระบรมราชูปถัมภ์ (วสท.) ร่วมกับ วปท./อาษา/TCA/TEMCA/TIDA — วัตถุประสงค์เพื่อใช้กับงานประมาณราคาของงานราชการ และเป็นมาตรฐานอ้างอิงงานก่อสร้างอาคารของประเทศไทย",
+  "codeStructure": "Division (1 หลัก) - Group (2 หลัก) - SubGroup (3 หลัก) - Item/SubItem (ระดับย่อยลงไป ระบุรายการเฉพาะโครงการ)",
+  "divisions": [
+    {
+      "code": "0",
+      "nameTh": "ค่าใช้จ่าย",
+      "nameEn": "EXPENSES",
+      "groups": [
+        {
+          "code": "01",
+          "nameTh": "ค่าใช้จ่ายสนาม",
+          "nameEn": "SITE EXPENSES",
+          "subGroups": [
+            "0 1 01 อุปกรณ์สำนักงาน",
+            "0 1 02 ค่าบุคลากร",
+            "0 1 03 ค่าภาษีและค่าธรรมเนียม",
+            "0 1 04 ค่าประกันภัย",
+            "0 1 05 ค่าสวัสดิการพนักงาน",
+            "0 1 06 ค่าเดินทาง",
+            "0 1 07 ค่าติดต่อสื่อสาร",
+            "0 1 99 สำรอง"
+          ]
+        },
+        {
+          "code": "02",
+          "nameTh": "ค่าต้นทุนทางอ้อม",
+          "nameEn": "INDIRECT COSTS",
+          "subGroups": [
+            "0 2 01 ค่าสำรวจและทดสอบ",
+            "0 2 02 ค่าอาคารชั่วคราว",
+            "0 2 03 ค่าโครงสร้างชั่วคราว",
+            "0 2 04 ค่านั่งร้านชั่วคราว",
+            "0 2 05 ค่าเครื่องจักรที่ช่วยในการก่อสร้าง",
+            "0 2 06 ค่าสาธารณูปโภคชั่วคราว",
+            "0 2 07 ค่าทำความสะอาด",
+            "0 2 08 ค่าขนส่ง",
+            "0 2 09 ค่าเอกสาร",
+            "0 2 10 ค่ารักษาภาวะแวดล้อมและความปลอดภัย",
+            "0 2 11 ค่าประสานงาน",
+            "0 2 12 สำรอง"
+          ]
+        }
+      ]
+    },
+    {
+      "code": "1",
+      "nameTh": "งานโครงสร้าง",
+      "nameEn": "STRUCTURAL WORK",
+      "groups": [
+        {
+          "code": "11",
+          "nameTh": "โครงสร้างใต้ดิน",
+          "nameEn": "SUB-STRUCTURE",
+          "subGroups": [
+            {
+              "code": "1 1 01",
+              "nameTh": "งานเสาเข็ม",
+              "nameEn": "PILING WORK",
+              "examples": [
+                "Driven Pile",
+                "Pile Head Treatment"
+              ]
+            },
+            {
+              "code": "1 1 02",
+              "nameTh": "งานดิน",
+              "nameEn": "EARTH WORK",
+              "examples": [
+                "Site Clearing/levelling",
+                "Footing excavation",
+                "Back fill with excavated soil",
+                "Soil disposal",
+                "Termite Control",
+                "Sand (Fill Material)",
+                "Lean Concrete (Fill Material)"
+              ]
+            },
+            {
+              "code": "1 1 03",
+              "nameTh": "คอนกรีตเสริมเหล็ก",
+              "nameEn": "REINFORCED CONCRETE",
+              "examples": [
+                "Structural Concrete (Fc' 240 ksc)",
+                "Form Work (Ordinary)",
+                "Reinforcing Bar (Dia. 6-25mm SR24/SD40)"
+              ]
+            }
+          ]
+        },
+        {
+          "code": "12",
+          "nameTh": "โครงสร้างเหนือดิน",
+          "nameEn": "SUPER-STRUCTURE",
+          "subGroups": [
+            {
+              "code": "1 2 01",
+              "nameTh": "คอนกรีตเสริมเหล็ก",
+              "nameEn": "REINFORCED CONCRETE",
+              "examples": [
+                "Structural Concrete",
+                "Form Work",
+                "Reinforcing Bar"
+              ]
+            },
+            {
+              "code": "1 2 02",
+              "nameTh": "คอนกรีตอัดแรง",
+              "nameEn": "PRESTRESSED CONCRETE",
+              "examples": [
+                "Structural Concrete",
+                "Form Work",
+                "Reinforcing Bar"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "2",
+      "nameTh": "งานสถาปัตยกรรม",
+      "nameEn": "ARCHITECTURAL WORK",
+      "groups": [
+        {
+          "code": "21",
+          "nameTh": "งานสถาปัตยกรรมภายในอาคาร",
+          "nameEn": "INTERNAL ARCHITECTURAL WORK",
+          "subGroups": [
+            {
+              "code": "2 1 01",
+              "nameTh": "พื้น และบัวเชิงผนัง",
+              "nameEn": "FLOOR & BASE",
+              "examples": [
+                "Floor (ceramic/stone/wood/coating)",
+                "Skirt (hard wood/ceramic/vinyl)"
+              ]
+            },
+            {
+              "code": "2 1 02",
+              "nameTh": "ผนัง",
+              "nameEn": "PARTITION",
+              "examples": [
+                "Wall Structure (brick)",
+                "Wall Finish (plaster/tile/paint)",
+                "Interior Paint./Wall"
+              ]
+            },
+            {
+              "code": "2 1 03",
+              "nameTh": "ฝ้าเพดาน",
+              "nameEn": "CEILING",
+              "examples": [
+                "Ceiling (gypsum board/exposed slab)",
+                "Interior Paint./Ceiling"
+              ]
+            },
+            {
+              "code": "2 1 04",
+              "nameTh": "ประตู และหน้าต่าง",
+              "nameEn": "DOOR & WINDOWS",
+              "examples": [
+                "Aluminum/Wood/Steel Joinery",
+                "Joinery Paint"
+              ]
+            },
+            {
+              "code": "2 1 05",
+              "nameTh": "บันได",
+              "nameEn": "STAIR",
+              "examples": [
+                "Stair/Step",
+                "Stair/Riser",
+                "Stair Landing",
+                "Stair Nosing",
+                "Stair Rail",
+                "Stair Sofit & Siding",
+                "Stair steel frame",
+                "Stair Paint"
+              ]
+            },
+            {
+              "code": "2 1 06",
+              "nameTh": "งานห้องน้ำ",
+              "nameEn": "TOILET WORK",
+              "examples": [
+                "Fixture (closet/lavatory/bathtub)",
+                "Hardware",
+                "Misc. items (shower/faucet/mirror)",
+                "Other Architectural Item (waterproof/counter/shelf)"
+              ]
+            },
+            {
+              "code": "2 1 99",
+              "nameTh": "สำรอง",
+              "nameEn": "Reserved",
+              "examples": []
+            }
+          ]
+        },
+        {
+          "code": "22",
+          "nameTh": "งานสถาปัตยกรรมภายนอกอาคาร",
+          "nameEn": "EXTERNAL ARCHITECTURAL WORK",
+          "subGroups": [
+            {
+              "code": "2 2 02",
+              "nameTh": "เปลือกอาคาร",
+              "nameEn": "FACADE",
+              "examples": [
+                "Exterior Wall (plaster & paint)",
+                "Blind",
+                "Sunshade",
+                "Terrace rail"
+              ]
+            },
+            {
+              "code": "2 2 06",
+              "nameTh": "หลังคา และอุปกรณ์",
+              "nameEn": "ROOF & ACCESSORIES",
+              "examples": [
+                "Roof Sheet (polycarbonate)",
+                "Roof gutter/curb",
+                "Misc. for Roof Work"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "3",
+      "nameTh": "งานตกแต่งภายใน",
+      "nameEn": "INTERIOR DECORATIVE WORK",
+      "groups": [
+        {
+          "code": "31",
+          "nameTh": "งานตกแต่ง",
+          "nameEn": "Fit-out Work",
+          "subGroups": [
+            "3 1 01 พื้นและบัวเชิงผนัง",
+            "3 1 02 ผนัง",
+            "3 1 03 ฝ้าเพดาน",
+            "3 1 04 ประตูและหน้าต่าง",
+            "3 1 05 บันได",
+            "3 1 06 ห้องน้ำ"
+          ]
+        },
+        {
+          "code": "32",
+          "nameTh": "งานตกแต่งในที่",
+          "nameEn": "Built-in Work",
+          "subGroups": [
+            "3 2 01 ครุภัณฑ์ติดตาย (Built-in furniture)",
+            "3 2 02 ผ้าม่านและอุปกรณ์ประกอบ"
+          ]
+        },
+        {
+          "code": "33",
+          "nameTh": "งานครุภัณฑ์ลอยตัว",
+          "nameEn": "Interior Movable Work",
+          "subGroups": [
+            "3 3 01 เฟอร์นิเจอร์ลอยตัว (Movable furniture)",
+            "3 3 02 ครุภัณฑ์ประกอบ (Accessories)",
+            "3 3 03 รายการตกแต่งอาคาร (Decorative items)",
+            "3 3 04 มู่ลี่ และอุปกรณ์ (Blind)"
+          ]
+        },
+        {
+          "code": "34",
+          "nameTh": "ป้ายสัญลักษณ์",
+          "nameEn": "Signage",
+          "subGroups": [
+            "3 4 01 ป้ายชนิดสั่งทำ (Custom-made sign)",
+            "3 4 02 ป้ายชนิดสำเร็จรูป (Ready-made sign)"
+          ]
+        },
+        {
+          "code": "35",
+          "nameTh": "อุปกรณ์เครื่องใช้",
+          "nameEn": "Equipment",
+          "subGroups": [
+            "3 5 01 เครื่องใช้ในครัวเรือน (Home appliance)",
+            "3 5 02 เครื่องใช้สำนักงาน (Office equipment)"
+          ]
+        }
+      ]
+    },
+    {
+      "code": "4",
+      "nameTh": "งานระบบ",
+      "nameEn": "SYSTEM WORK",
+      "groups": [
+        {
+          "code": "41",
+          "nameTh": "ระบบสุขาภิบาล",
+          "nameEn": "SANITARY SYSTEM",
+          "subGroups": [
+            {
+              "code": "4 1 01",
+              "nameTh": "ระบบน้ำดี",
+              "nameEn": "WATER SUPPLY",
+              "examples": [
+                "Main Incoming Water Supply",
+                "Cold Water supply work",
+                "Hot Water Supply"
+              ]
+            },
+            {
+              "code": "4 1 02",
+              "nameTh": "ระบบระบายน้ำ",
+              "nameEn": "DRAINAGE",
+              "examples": [
+                "Soil Waste & Vent Pipe Piping Work",
+                "Kitchen Waste Piping Work",
+                "Storm Drainage system",
+                "Drainage & Sewerage Submersible system"
+              ]
+            },
+            {
+              "code": "4 1 03",
+              "nameTh": "ระบบบำบัดน้ำ",
+              "nameEn": "WATER TREATMENT",
+              "examples": [
+                "Waste Water Treatment & Equipment",
+                "Reuse Water System"
+              ]
+            },
+            {
+              "code": "4 1 04",
+              "nameTh": "ระบบอื่นๆ",
+              "nameEn": "OTHER SANITARY SYSTEM",
+              "examples": [
+                "Swimming Pool"
+              ]
+            }
+          ]
+        },
+        {
+          "code": "42",
+          "nameTh": "ระบบไฟฟ้า",
+          "nameEn": "ELECTRICAL SYSTEM",
+          "subGroups": [
+            {
+              "code": "4 2 02",
+              "nameTh": "ระบบไฟฟ้าประธาน",
+              "nameEn": "Main power distribution",
+              "examples": [
+                "Power Generator",
+                "Main Distribution Board",
+                "Distribution Board",
+                "Panel board and Meter panel",
+                "Bus Duct & Plug-in Cable Box",
+                "Main Feeder (Cable & Wire)",
+                "Sub Feeder (Cable & Wire)",
+                "Uninterruptable Power Supply system (UPS)"
+              ]
+            },
+            {
+              "code": "4 2 03",
+              "nameTh": "ระบบไฟฟ้าแสงสว่าง",
+              "nameEn": "LIGHTING",
+              "examples": [
+                "Branch Feeder (Cable & Wire)",
+                "Lighting Fixture",
+                "Switch, Outlet and CB Box"
+              ]
+            },
+            {
+              "code": "4 2 04",
+              "nameTh": "ระบบสายดินและป้องกันฟ้าผ่า",
+              "nameEn": "GROUND & LIGHTNING",
+              "examples": [
+                "Grounding System",
+                "Lightning Protection System"
+              ]
+            },
+            {
+              "code": "4 2 05",
+              "nameTh": "ระบบแจ้งเตือนเหตุเพลิงไหม้",
+              "nameEn": "FIRE ALARM",
+              "examples": [
+                "Fire Alarm System"
+              ]
+            }
+          ]
+        },
+        {
+          "code": "43",
+          "nameTh": "ระบบสื่อสาร",
+          "nameEn": "COMMUNICATION SYSTEM",
+          "subGroups": [
+            {
+              "code": "4 3 01",
+              "nameTh": "ระบบโทรศัพท์",
+              "nameEn": "TELEPHONE",
+              "examples": [
+                "Telephone System"
+              ]
+            },
+            {
+              "code": "4 3 02",
+              "nameTh": "ระบบโครงข่ายสายคอมพิวเตอร์",
+              "nameEn": "Computer network",
+              "examples": [
+                "Computer System"
+              ]
+            },
+            {
+              "code": "4 3 03",
+              "nameTh": "ระบบประกาศสาธารณะ",
+              "nameEn": "Public address",
+              "examples": [
+                "Sound System"
+              ]
+            },
+            {
+              "code": "4 3 04",
+              "nameTh": "ระบบสายสัญญาณโทรทัศน์",
+              "nameEn": "MATV, IPTV",
+              "examples": [
+                "Master Antenna Television system"
+              ]
+            },
+            {
+              "code": "4 3 05",
+              "nameTh": "ระบบรักษาความปลอดภัย",
+              "nameEn": "Security",
+              "examples": [
+                "CCTV",
+                "Access Control System"
+              ]
+            },
+            {
+              "code": "4 3 06",
+              "nameTh": "ระบบโสตทัศนูปกรณ์",
+              "nameEn": "Audio visual",
+              "examples": [
+                "Audio Visual System"
+              ]
+            },
+            {
+              "code": "4 3 07",
+              "nameTh": "ระบบการจัดการเวลากลาง",
+              "nameEn": "Center clock management",
+              "examples": [
+                "Master Center Clock Management System"
+              ]
+            }
+          ]
+        },
+        {
+          "code": "44",
+          "nameTh": "ระบบเครื่องกล",
+          "nameEn": "MECHANICAL SYSTEM",
+          "subGroups": [
+            {
+              "code": "4 4 01",
+              "nameTh": "ระบบระบายอากาศและปรับอากาศ",
+              "nameEn": "HVAC",
+              "examples": [
+                "Chiller & CMPS",
+                "Cooling Tower",
+                "Air Handling Unit/Fan Coil Unit/Pre Cool Air Unit",
+                "Air Curtain Unit/Heat Recovery Wheel Unit",
+                "Air Condition Split Type Unit",
+                "Ventilation and Exhaust Fan",
+                "Piping Work & Accessories",
+                "Valve & Other Accessories",
+                "Duct work",
+                "Diffuser, Grille and register",
+                "Automatic temperature Control",
+                "Electrical Work",
+                "Building Automation System"
+              ]
+            },
+            {
+              "code": "4 4 02",
+              "nameTh": "ระบบดับเพลิง",
+              "nameEn": "Fire suppression",
+              "examples": [
+                "Fire Pump & Associate",
+                "Fire Hydrant & Hose Reel",
+                "Sprinkler & Associate Work",
+                "Piping System",
+                "Fire Suppression System",
+                "Building Automation system"
+              ]
+            },
+            {
+              "code": "4 4 03",
+              "nameTh": "ระบบท่อลม",
+              "nameEn": "Air piping",
+              "examples": [
+                "Liquid Petroleum Gas System"
+              ]
+            }
+          ]
+        },
+        {
+          "code": "45",
+          "nameTh": "ระบบขนส่ง",
+          "nameEn": "CONVEYING SYSTEM",
+          "subGroups": [
+            {
+              "code": "4 5 01",
+              "nameTh": "ลิฟท์โดยสาร/ขนส่ง",
+              "nameEn": "ELEVATOR",
+              "examples": [
+                "Passenger Lift",
+                "Service Lift",
+                "Fire man Lift"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "5",
+      "nameTh": "งานรื้อถอนบางส่วนและงานก่อสร้างพิเศษ",
+      "nameEn": "ELEMENTAL DEMOLITION AND SPECIAL CONSTRUCTION WORK",
+      "groups": [
+        {
+          "code": "51",
+          "nameTh": "งานรื้อถอนอาคารบางส่วน",
+          "nameEn": "Building element Demolition work",
+          "subGroups": [
+            "5 1 01 งานรื้อถอนโครงสร้างบางส่วน (Structure element demolition)",
+            "5 1 02 งานรื้อ/สถาปัตยกรรม/งานตกแต่งภายใน (Architectural/Interior demolition)",
+            "5 1 03 งานรื้อถอนงานระบบ (Systems demolition work)"
+          ]
+        }
+      ]
+    },
+    {
+      "code": "6",
+      "nameTh": "งานบริเวณก่อสร้าง",
+      "nameEn": "SITE WORK",
+      "groups": [
+        {
+          "code": "61",
+          "nameTh": "งานเตรียมพื้นที่บริเวณก่อสร้าง",
+          "nameEn": "SITE PREPARATION",
+          "subGroups": [
+            "6 1 01 งานถางและการขุดตอบริเวณ (CLEARING AND GRUBBING)"
+          ]
+        },
+        {
+          "code": "62",
+          "nameTh": "งานบริเวณภายนอกอาคาร",
+          "nameEn": "EXTERIOR SITE WORK",
+          "subGroups": [
+            "6 2 01 พื้นดาดแข็ง (HARD SCAPE)",
+            "6 2 05 โครงสร้างระบบสุขาภิบาลและท่อระบายน้ำ (SANITARY AND DRAINAGE STRUCTURE)"
+          ]
+        },
+        {
+          "code": "63",
+          "nameTh": "งานระบบภายนอกอาคาร",
+          "nameEn": "EXTERIOR SYSTEM WORK",
+          "subGroups": [
+            "6 3 01 ระบบสุขาภิบาล",
+            "6 3 02 ระบบไฟฟ้า",
+            "6 3 03 ระบบสื่อสาร"
+          ]
+        }
+      ]
+    }
+  ],
+  "note": "รหัส EIT ที่ลึกกว่าระดับ SubGroup (3 หลัก) เป็นตัวอย่างรายการงานเฉพาะโครงการในต้นฉบับ (เช่น ชนิดคอนกรีต/ขนาดเหล็ก/ยี่ห้อวัสดุ) ไม่ใช่รหัสมาตรฐานตายตัว — แต่ละโครงการกำหนด รายการย่อยเองภายใต้ SubGroup ที่กำหนดไว้"
+}

@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "boq-ontology": {
+      "command": "D:\\BIM-PROJECT\\BOQ-GEN-PROTOTYPE\\ontology_neo4j\\.venv\\Scripts\\python.exe",
+      "args": ["D:\\BIM-PROJECT\\BOQ-GEN-PROTOTYPE\\ontology_neo4j\\server.py"],
+      "env": {"PYTHONIOENCODING": "utf-8"}
+    }
+  }
+}

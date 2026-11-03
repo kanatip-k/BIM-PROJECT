@@ -1,0 +1,26 @@
+{
+  "version": "mapping-demo-1.0",
+  "classificationSystem": "UNIFORMAT II educational subset",
+  "costCodeDisciplines": [
+    {"id": "uniformat-structure", "discipline": "Structure", "prefixes": ["A10", "A20", "B10"]},
+    {"id": "uniformat-architecture", "discipline": "Architecture", "prefixes": ["B20", "B30", "C", "E"]},
+    {"id": "uniformat-mep", "discipline": "MEP", "prefixes": ["D"]}
+  ],
+  "disciplineRules": [
+    {"id": "disc-mep", "discipline": "MEP", "keywords": ["pipe", "duct", "hvac", "mechanical", "electrical", "cable", "conduit", "plumbing", "sprinkler", "fire protection"]},
+    {"id": "disc-structure", "discipline": "Structure", "keywords": ["structural", "framing", "beam", "column", "foundation", "footing", "rebar", "steel", "concrete"]},
+    {"id": "disc-architecture", "discipline": "Architecture", "keywords": ["wall", "door", "window", "floor", "ceiling", "roof", "finish", "curtain", "furniture"]}
+  ],
+  "costCodeRules": [
+    {"id": "map-foundation", "code": "A10", "title": "Foundations", "keywords": ["foundation", "footing", "pile"]},
+    {"id": "map-superstructure", "code": "B10", "title": "Superstructure", "keywords": ["beam", "column", "structural framing", "slab"]},
+    {"id": "map-envelope", "code": "B20", "title": "Exterior Enclosure", "keywords": ["exterior wall", "curtain wall", "window", "door"]},
+    {"id": "map-roof", "code": "B30", "title": "Roofing", "keywords": ["roof"]},
+    {"id": "map-interior", "code": "C10", "title": "Interior Construction", "keywords": ["interior wall", "partition", "door"]},
+    {"id": "map-finishes", "code": "C30", "title": "Interior Finishes", "keywords": ["finish", "ceiling", "flooring", "tile", "paint"]},
+    {"id": "map-plumbing", "code": "D20", "title": "Plumbing", "keywords": ["pipe", "plumbing", "sanitary", "water supply"]},
+    {"id": "map-hvac", "code": "D30", "title": "HVAC", "keywords": ["duct", "hvac", "air terminal", "mechanical"]},
+    {"id": "map-fire", "code": "D40", "title": "Fire Protection", "keywords": ["sprinkler", "fire protection"]},
+    {"id": "map-electrical", "code": "D50", "title": "Electrical", "keywords": ["electrical", "cable", "conduit", "lighting"]}
+  ]
+}
